@@ -8,7 +8,7 @@
 CGameControllerDM::CGameControllerDM(class CGameContext *pGameServer)
 : IGameController(pGameServer)
 {
-	m_pGameType = "uTown";
+	m_pGameType = "uTown-Fun";
 }
 
 void CGameControllerDM::Tick()
