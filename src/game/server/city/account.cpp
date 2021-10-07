@@ -234,8 +234,6 @@ void CAccount::Register(char *Username, char *Password)
 		return;
 	}
 	
-	if(mkdir("accounts", mode_t S_IRWXU || S_IRWXG | S_IROTH | S_IXOTH))
-		dbg_msg("account", "Account folder created!");
 	#endif
 
 	#if defined(CONF_FAMILY_WINDOWS)
@@ -247,8 +245,6 @@ void CAccount::Register(char *Username, char *Password)
 		return;
 	}
 
-	if(mkdir("accounts"))
-		dbg_msg("account", "Account folder created!");
 	#endif
 
 	str_format(aBuf, sizeof(aBuf), "accounts/+%s.acc", Username);
