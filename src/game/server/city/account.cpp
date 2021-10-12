@@ -87,7 +87,6 @@ void CAccount::Login(char *Username, char *Password)
 			{
 				dbg_msg("account", "Account login failed ('%s' - already in use (local))", Username);
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Account already in use");
-				return;
 			}
 
 			if(!GameServer()->m_aaExtIDs[i][j])
@@ -97,7 +96,6 @@ void CAccount::Login(char *Username, char *Password)
 			{
 				dbg_msg("account", "Account login failed ('%s' - already in use (extern))", Username);
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Account already in use");
-				return;
 			}
 		}
 	}
