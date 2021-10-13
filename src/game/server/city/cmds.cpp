@@ -137,7 +137,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		
 		if(pOwner && pOwner->IsAlive())
 		{
-			pOwner->m_Home = m_pPlayer->m_AccData.m_UserID;
+			pOwner->m_Home = m_pPlayer->m_AccData.m_HouseID;
 			dbg_msg("-.-", "/home: %i", pOwner->m_Home);
 		}
 
