@@ -1,5 +1,7 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
-/* If you are missing that file, acquire a complete release at teeworlds.com.                */
+/* If you miss that file, contact Pikotee, because he changed some stuff here ...			 */
+/*	... and would like to be mentioned in credits in case of using his code					 */
+
 #ifndef ENGINE_SHARED_NETWORK_H
 #define ENGINE_SHARED_NETWORK_H
 
@@ -17,7 +19,7 @@ CURRENT:
 		(unsigned char padding[3])	// 24 bit extra incase it's a connection less packet
 									// this is to make sure that it's compatible with the
 									// old protocol
-
+									
 	chunk header: 2-3 bytes
 		unsigned char flags_size; // 2bit flags, 6 bit size
 		unsigned char size_seq; // 4bit size, 4bit seq
@@ -58,6 +60,9 @@ enum
 	NET_CONNSTATE_PENDING=2,
 	NET_CONNSTATE_ONLINE=3,
 	NET_CONNSTATE_ERROR=4,
+
+	// Dummy
+	NET_CONNSTATE_DUMMY=5,
 
 	NET_PACKETFLAG_CONTROL=1,
 	NET_PACKETFLAG_CONNLESS=2,
@@ -191,6 +196,10 @@ public:
 	int64 LastRecvTime() const { return m_LastRecvTime; }
 
 	int AckSequence() const { return m_Ack; }
+
+	// Dummy
+	void DummyConnect();
+	void DummyDrop();
 };
 
 class CConsoleNetConnection
@@ -306,6 +315,10 @@ public:
 
 	//
 	int Drop(int ClientID, const char *pReason);
+
+	// Dummy
+	void DummyInit(int DummyID);
+	void DummyDelete(int DummyID);
 
 	// banning
 	int BanAdd(NETADDR Addr, int Seconds, const char *pReason);

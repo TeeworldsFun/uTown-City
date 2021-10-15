@@ -1,5 +1,7 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
-/* If you are missing that file, acquire a complete release at teeworlds.com.                */
+/* If you miss that file, contact Pikotee, because he changed some stuff here ...			 */
+/*	... and would like to be mentioned in credits in case of using his code					 */
+
 #include <base/system.h>
 #include "config.h"
 #include "network.h"
@@ -193,6 +195,17 @@ void CNetConnection::Disconnect(const char *pReason)
 	Reset();
 }
 
+// Dummy
+void CNetConnection::DummyConnect()
+{
+	m_State = NET_CONNSTATE_DUMMY;
+}
+
+void CNetConnection::DummyDrop()
+{
+	m_State = NET_CONNSTATE_OFFLINE;
+}
+
 int CNetConnection::Feed(CNetPacketConstruct *pPacket, NETADDR *pAddr)
 {
 	int64 Now = time_get();
@@ -290,7 +303,8 @@ int CNetConnection::Update()
 {
 	int64 Now = time_get();
 
-	if(State() == NET_CONNSTATE_OFFLINE || State() == NET_CONNSTATE_ERROR)
+	// Dummy
+	if(State() == NET_CONNSTATE_OFFLINE || State() == NET_CONNSTATE_ERROR || State() == NET_CONNSTATE_DUMMY)
 		return 0;
 
 	// check for timeout

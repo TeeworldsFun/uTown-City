@@ -1,5 +1,7 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
-/* If you are missing that file, acquire a complete release at teeworlds.com.                */
+/* If you miss that file, contact Pikotee, because he changed some stuff here ...			 */
+/*	... and would like to be mentioned in credits in case of using his code					 */
+
 #include <new>
 #include <base/math.h>
 #include <engine/shared/config.h>
@@ -36,7 +38,7 @@ void CGameContext::Construct(int Resetting)
 
 	if(Resetting==NO_RESET)
 		m_pVoteOptionHeap = new CHeap();
-
+		
 	m_TeleNum = 0;
 	
 }
@@ -608,13 +610,28 @@ void CGameContext::OnClientEnter(int ClientID)
 
 	SendChatTarget(ClientID, "Welcome on uTown");
 	SendChatTarget(ClientID, "Made by Pikotee & KlickFoot");
+	SendChatTarget(ClientID, "The server you are playing now is a modified version of CHNFun");
 	SendChatTarget(ClientID, "use /help for some help");
 
 	str_format(aBuf, sizeof(aBuf), "team_join player='%d:%s' team=%d", ClientID, Server()->ClientName(ClientID), m_apPlayers[ClientID]->GetTeam());
 	Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
 
 	m_VoteUpdate = true;
+}
 
+// Dummy
+void CGameContext::NewDummy(int DummyID, bool CustomColor, int ColorBody, int ColorFeet, const char *pSkin, const char *pName, const char *pClan, int Country)
+{
+	m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, m_pController->GetAutoTeam(DummyID));
+	m_apPlayers[DummyID]->m_IsDummy = true;
+	Server()->DummyJoin(DummyID, pName, pClan, Country);
+
+	str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, pSkin, sizeof(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName));
+	m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = CustomColor;
+	m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = ColorBody;
+	m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = ColorFeet;
+
+	OnClientEnter(DummyID);
 }
 
 void CGameContext::OnClientConnected(int ClientID)
@@ -700,8 +717,35 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			pMessage++;
 		}
 
-	 if(pMsg->m_pMessage[0] == '/')
-			pPlayer->m_pChatCmd->ChatCmd(pMsg);
+		if(pMsg->m_pMessage[0] == '/')
+				pPlayer->m_pChatCmd->ChatCmd(pMsg);
+		// Dummy
+		if(!str_comp_nocase(pMsg->m_pMessage, "/dummy"))
+		{
+			for(int i = 0; i < g_Config.m_SvMaxClients; i++)
+			{
+				if(m_apPlayers[i])
+					continue;
+
+				NewDummy(i, true);
+				return;
+			}
+		}
+		else if(!str_comp_nocase(pMsg->m_pMessage, "/delete"))
+		{
+			for(int i = 0; i < g_Config.m_SvMaxClients; i++)
+			{
+				if(!m_apPlayers[i] || !m_apPlayers[i]->m_IsDummy)
+					continue;
+
+				Server()->DummyLeave(i/*, "Any Reason?"*/);
+				return;
+			}
+		}
+		else if(pMsg->m_pMessage[0] == '/')
+		{
+			// Wrong CMD?
+		}
 		else
 			SendChat(ClientID, Team, pMsg->m_pMessage);
 	}
@@ -806,6 +850,13 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				return;
 			}
 
+			// Dummy
+			if(m_apPlayers[KickID]->m_IsDummy)
+			{
+				SendChatTarget(ClientID, "Invalid client id to kick (Dummy)");
+				return;
+			}
+
 			str_format(aChatmsg, sizeof(aChatmsg), "'%s' called for vote to kick '%s' (%s)", Server()->ClientName(ClientID), Server()->ClientName(KickID), pReason);
 			str_format(aDesc, sizeof(aDesc), "Kick '%s'", Server()->ClientName(KickID));
 			if (!g_Config.m_SvVoteKickBantime)
@@ -835,6 +886,13 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			if(SpectateID == ClientID)
 			{
 				SendChatTarget(ClientID, "You can't move yourself");
+				return;
+			}
+			
+			// Dummy
+			if(m_apPlayers[SpectateID]->m_IsDummy)
+			{
+				SendChatTarget(ClientID, "Invalid client id to move (Dummy)");
 				return;
 			}
 
@@ -871,7 +929,9 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			return;
 		}
 		else if(pPlayer->m_Vote == 0)
+		if(pPlayer->m_Vote == 0)
 		{
+			CNetMsg_Cl_Vote *pMsg = (CNetMsg_Cl_Vote *)pRawMsg;
 			if(!pMsg->m_Vote)
 				return;
 
@@ -1363,6 +1423,13 @@ void CGameContext::ConForceVote(IConsole::IResult *pResult, void *pUserData)
 			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", "Invalid client id to kick");
 			return;
 		}
+		
+		// Dummy
+		if(pSelf->m_apPlayers[KickID]->m_IsDummy)
+		{
+			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", "Invalid client id to kick (Dummy)");
+			return;
+		}
 
 		if (!g_Config.m_SvVoteKickBantime)
 		{
@@ -1383,6 +1450,13 @@ void CGameContext::ConForceVote(IConsole::IResult *pResult, void *pUserData)
 		if(SpectateID < 0 || SpectateID >= MAX_CLIENTS || !pSelf->m_apPlayers[SpectateID] || pSelf->m_apPlayers[SpectateID]->GetTeam() == TEAM_SPECTATORS)
 		{
 			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", "Invalid client id to move");
+			return;
+		}
+		
+		// Dummy
+		if(pSelf->m_apPlayers[SpectateID]->m_IsDummy)
+		{
+			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", "Invalid client id to move (Dummy)");
 			return;
 		}
 

@@ -1,5 +1,7 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
-/* If you are missing that file, acquire a complete release at teeworlds.com.                */
+/* If you miss that file, contact Pikotee, because he changed some stuff here ...			 */
+/*	... and would like to be mentioned in credits in case of using his code					 */
+
 #include <base/system.h>
 #include "network.h"
 
@@ -80,7 +82,7 @@ int CNetServer::Drop(int ClientID, const char *pReason)
 {
 	// TODO: insert lots of checks here
 	/*NETADDR Addr = ClientAddr(ClientID);
-
+	
 	dbg_msg("net_server", "client dropped. cid=%d ip=%d.%d.%d.%d reason=\"%s\"",
 		ClientID,
 		Addr.ip[0], Addr.ip[1], Addr.ip[2], Addr.ip[3],
@@ -251,7 +253,9 @@ int CNetServer::Update()
 	{
 		m_aSlots[i].m_Connection.Update();
 		if(m_aSlots[i].m_Connection.State() == NET_CONNSTATE_ERROR)
+		{
 			Drop(i, m_aSlots[i].m_Connection.ErrorString());
+		}
 	}
 
 	// remove expired bans
@@ -264,6 +268,17 @@ int CNetServer::Update()
 	return 0;
 }
 
+// Dummy
+void CNetServer::DummyInit(int DummyID)
+{
+	m_aSlots[DummyID].m_Connection.DummyConnect();
+}
+
+// Dummy
+void CNetServer::DummyDelete(int DummyID)
+{
+	m_aSlots[DummyID].m_Connection.DummyDrop();
+}
 /*
 	TODO: chopp up this function into smaller working parts
 */
@@ -431,6 +446,10 @@ int CNetServer::Send(CNetChunk *pChunk)
 	}
 	else
 	{
+		// Dummy
+		if(m_aSlots[pChunk->m_ClientID].m_Connection.State() == NET_CONNSTATE_DUMMY)
+			return -1;
+
 		int Flags = 0;
 		dbg_assert(pChunk->m_ClientID >= 0, "errornous client id");
 		dbg_assert(pChunk->m_ClientID < MaxClients(), "errornous client id");

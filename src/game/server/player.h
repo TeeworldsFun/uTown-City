@@ -1,5 +1,7 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
-/* If you are missing that file, acquire a complete release at teeworlds.com.                */
+/* If you miss that file, contact Pikotee, because he changed some stuff here ...			 */
+/*	... and would like to be mentioned in credits in case of using his code					 */
+
 #ifndef GAME_SERVER_PLAYER_H
 #define GAME_SERVER_PLAYER_H
 
@@ -36,6 +38,10 @@ public:
 
 	void KillCharacter(int Weapon = WEAPON_GAME);
 	CCharacter *GetCharacter();
+
+
+	// Dummy
+	bool m_IsDummy;
 
 	//---------------------------------------------------------
 	// this is used for snapping so we know how we can clip the view for the player
@@ -163,7 +169,7 @@ public:
 	int m_Authed;
 	char m_aRank[64];
 			
-	//Klickfoots scheiß
+	//Klickfoots scheiï¿½
 	int m_ReleaseCarousel;
 	int m_Crown;
 

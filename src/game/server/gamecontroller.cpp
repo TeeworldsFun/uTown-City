@@ -1,5 +1,7 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
-/* If you are missing that file, acquire a complete release at teeworlds.com.                */
+/* If you miss that file, contact Pikotee, because he changed some stuff here ...			 */
+/*	... and would like to be mentioned in credits in case of using his code					 */
+
 #include <engine/shared/config.h>
 #include <game/mapitems.h>
 
@@ -68,7 +70,7 @@ void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Type)
 {
 	// get spawn point
 	for(int i = 0; i < m_aNumSpawnPoints[Type]; i++)
-	{	
+	{
 		// check if the position is occupado
 		CCharacter *aEnts[MAX_CLIENTS];
 		int Num = GameServer()->m_World.FindEntities(m_aaSpawnPoints[Type][i], 64, (CEntity**)aEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
@@ -116,7 +118,8 @@ bool IGameController::CanSpawn(int Team, vec2 *pOutPos, int Jailed)
 		if(!Eval.m_Got)
 		{
 			EvaluateSpawnType(&Eval, 0);
-			
+			if(!Eval.m_Got)
+				EvaluateSpawnType(&Eval, 1+((Team+1)&1));
 		}
 	}
 	else
@@ -125,7 +128,7 @@ bool IGameController::CanSpawn(int Team, vec2 *pOutPos, int Jailed)
 			EvaluateSpawnType(&Eval, 1);
 		else if(Jailed == 2)
 		EvaluateSpawnType(&Eval, 2);
-		else
+				else
 		EvaluateSpawnType(&Eval, 0);
 		
 
@@ -174,7 +177,7 @@ bool IGameController::OnEntity(int Index, vec2 Pos)
 		Type = POWERUP_NINJA;
 		SubType = WEAPON_NINJA;
 	}
-	else if(Index == ENTITY_WEAPON_HAMMER)
+		else if(Index == ENTITY_WEAPON_HAMMER)
 	{
 		Type = POWERUP_WEAPON;
 		SubType = WEAPON_HAMMER;
@@ -392,7 +395,7 @@ int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *
 	if(!pKiller || Weapon == WEAPON_GAME)
 		return 0;
 	if(pKiller == pVictim->GetPlayer())
-	{
+		{
 		if(pVictim->GetPlayer()->m_AccData.m_Money >= 50)
 			pVictim->GetPlayer()->m_AccData.m_Money -= 50;
 
@@ -408,7 +411,7 @@ int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *
 			{
 				char aKillmsg[50];
 			pKiller->m_Score++; // normal kill
-			pKiller->m_AccData.m_Money += 500;
+						pKiller->m_AccData.m_Money += 500;
 			str_format(aKillmsg, sizeof(aKillmsg), "+500 TC || current %i TC",pKiller->m_AccData.m_Money);
 				pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
 			}
@@ -462,7 +465,7 @@ void IGameController::OnCharacterSpawn(class CCharacter *pChr)
 	// give default weapons
 	pChr->GiveWeapon(WEAPON_HAMMER, -1);
 	pChr->GiveWeapon(WEAPON_GUN, 10);
-
+	
 	if(pChr->GetPlayer()->m_AccData.m_AllWeapons)
 	{
 		pChr->GiveWeapon(WEAPON_RIFLE, 10);
@@ -594,9 +597,11 @@ void IGameController::Tick()
 	// check for inactive players
 	if(g_Config.m_SvInactiveKickTime > 0)
 	{
+		
 		for(int i = 0; i < MAX_CLIENTS; ++i)
 		{
-			if(GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetTeam() != TEAM_SPECTATORS && !Server()->IsAuthed(i))
+			// Dummy
+			if(GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetTeam() != TEAM_SPECTATORS && !Server()->IsAuthed(i) && !GameServer()->m_apPlayers[i]->m_IsDummy)
 			{
 				if(Server()->Tick() > GameServer()->m_apPlayers[i]->m_LastActionTick+g_Config.m_SvInactiveKickTime*Server()->TickSpeed()*60)
 				{
@@ -612,6 +617,7 @@ void IGameController::Tick()
 						{
 							// move player to spectator if the reserved slots aren't filled yet, kick him otherwise
 							int Spectators = 0;
+
 							for(int j = 0; j < MAX_CLIENTS; ++j)
 								if(GameServer()->m_apPlayers[j] && GameServer()->m_apPlayers[j]->GetTeam() == TEAM_SPECTATORS)
 									++Spectators;
