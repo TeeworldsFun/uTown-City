@@ -1,0 +1,4 @@
+/objs/*
+*_d
+/datasrc/*.pyc
+/accounts/*

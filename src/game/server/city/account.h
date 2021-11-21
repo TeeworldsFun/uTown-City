@@ -22,6 +22,11 @@ public:
 
 	static const int MAX_SERVER = 2;
 	int NextID();
+
+	int PlayerLevelUp();
+	int PlayerExpUp();
+	int GetPlayerLevel();
+	int GetPlayerExp();
 	
 	
 	//bool LoggedIn(const char * Username);

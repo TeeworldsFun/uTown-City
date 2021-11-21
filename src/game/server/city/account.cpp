@@ -5,7 +5,7 @@
 #include <fstream>
 #include <engine/config.h>
 #include "account.h"
-//#include "game/server/gamecontext.h"
+#include "game/server/gamecontroller.h"
 
 #if defined(CONF_FAMILY_WINDOWS)
 	#include <tchar.h>
@@ -33,6 +33,26 @@ CAccount::CAccount(CPlayer *pPlayer, CGameContext *pGameServer)
 #endif
 #endif
 */
+
+int CAccount::PlayerLevelUp()
+{
+	int m_Level = GetPlayerLevel()*3;
+	if(GetPlayerExp() >= m_Level)
+	{
+		m_pPlayer->m_AccData.m_Level++;
+		m_pPlayer->m_AccData.m_ExpPoints = 0;
+	}
+}
+
+int CAccount::GetPlayerLevel()
+{
+	return m_pPlayer->m_AccData.m_Level;
+}
+
+int CAccount::GetPlayerExp()
+{
+	return m_pPlayer->m_AccData.m_ExpPoints;
+}
 
 void CAccount::Login(char *Username, char *Password)
 {
@@ -63,7 +83,7 @@ void CAccount::Login(char *Username, char *Password)
 		return;
 	}
 
-	str_format(aBuf, sizeof(aBuf), "accounts/+%s.acc", Username);
+	str_format(aBuf, sizeof(aBuf), "accounts/%s.acc", Username);
 
 	char AccUsername[32];
 	char AccPassword[32];
@@ -113,6 +133,7 @@ void CAccount::Login(char *Username, char *Password)
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Wrong username or password");
 		return;
 	}
+	PlayerLevelUp();
 
 
 	Accfile = fopen(aBuf, "r"); 		
@@ -127,7 +148,7 @@ void CAccount::Login(char *Username, char *Password)
  		&m_pPlayer->m_AccData.m_Money, // Done
 		&m_pPlayer->m_AccData.m_Health, // Done
 		&m_pPlayer->m_AccData.m_Armor, // Done
-		&m_pPlayer->m_Score, // Done
+		&m_pPlayer->m_AccData.m_Level, // Done
 
 		&m_pPlayer->m_AccData.m_Donor, 
 		&m_pPlayer->m_AccData.m_VIP, // Done
@@ -164,8 +185,7 @@ void CAccount::Login(char *Username, char *Password)
 		&m_pPlayer->m_AccData.m_NinjaStart, // Done
 		&m_pPlayer->m_AccData.m_NinjaSwitch, // Done
 
-		&m_pPlayer->m_AccData.m_Level,
-		&m_pPlayer->m_AccData.m_ExpPoints); 
+		&m_pPlayer->m_AccData.m_ExpPoints); //Done
 
 	fclose(Accfile);
 
@@ -175,6 +195,7 @@ void CAccount::Login(char *Username, char *Password)
 	{
 		if(pOwner->IsAlive())
 			pOwner->Die(m_pPlayer->GetCID(), WEAPON_GAME);
+		PlayerLevelUp();
 	}
 	 
 	if(m_pPlayer->GetTeam() == TEAM_SPECTATORS)
@@ -245,12 +266,12 @@ void CAccount::Register(char *Username, char *Password)
 
 	#endif
 
-	str_format(aBuf, sizeof(aBuf), "accounts/+%s.acc", Username);
+	str_format(aBuf, sizeof(aBuf), "accounts/%s.acc", Username);
 
 	FILE *Accfile;
 	Accfile = fopen(aBuf, "a+");
 
-	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d", 
+	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d", 
 		Username, 
 		Password, 
 		"0",
@@ -260,7 +281,7 @@ void CAccount::Register(char *Username, char *Password)
 		m_pPlayer->m_AccData.m_Money,
 		m_pPlayer->m_AccData.m_Health<10?10:m_pPlayer->m_AccData.m_Health,
 		m_pPlayer->m_AccData.m_Armor<10?10:m_pPlayer->m_AccData.m_Armor,
-		m_pPlayer->m_Score<0?0:m_pPlayer->m_Score, 
+		GetPlayerLevel()<1?1:m_pPlayer->m_Score, 
 
 		m_pPlayer->m_AccData.m_Donor,
 		m_pPlayer->m_AccData.m_VIP,
@@ -297,8 +318,7 @@ void CAccount::Register(char *Username, char *Password)
 		m_pPlayer->m_AccData.m_NinjaStart, 
 		m_pPlayer->m_AccData.m_NinjaSwitch,
 
-		m_pPlayer->m_AccData.m_Level,
-		m_pPlayer->m_AccData.m_ExpPoints);
+		GetPlayerExp());
 
 	fputs(aBuf, Accfile);
 	fclose(Accfile);
@@ -311,7 +331,7 @@ void CAccount::Register(char *Username, char *Password)
 bool CAccount::Exists(const char *Username)
 {
 	char aBuf[128];
-	str_format(aBuf, sizeof(aBuf), "accounts/+%s.acc", Username);
+	str_format(aBuf, sizeof(aBuf), "accounts/%s.acc", Username);
     if(FILE *Accfile = fopen(aBuf, "r"))
     {
         fclose(Accfile);
@@ -323,12 +343,12 @@ bool CAccount::Exists(const char *Username)
 void CAccount::Apply()
 {
 	char aBuf[512];
-	str_format(aBuf, sizeof(aBuf), "accounts/+%s.acc", m_pPlayer->m_AccData.m_Username);
+	str_format(aBuf, sizeof(aBuf), "accounts/%s.acc", m_pPlayer->m_AccData.m_Username);
 	std::remove(aBuf);
 	FILE *Accfile;
 	Accfile = fopen(aBuf,"a+");
 	
-	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d", 
+	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d", 
 		m_pPlayer->m_AccData.m_Username,
 		m_pPlayer->m_AccData.m_Password, 
 		m_pPlayer->m_AccData.m_RconPassword, 
@@ -338,7 +358,7 @@ void CAccount::Apply()
 		m_pPlayer->m_AccData.m_Money,
 		m_pPlayer->m_AccData.m_Health,
 		m_pPlayer->m_AccData.m_Armor,
-		m_pPlayer->m_Score, 
+		GetPlayerLevel(),
 
 		m_pPlayer->m_AccData.m_Donor,
 		m_pPlayer->m_AccData.m_VIP,
@@ -375,8 +395,7 @@ void CAccount::Apply()
 		m_pPlayer->m_AccData.m_NinjaStart, 
 		m_pPlayer->m_AccData.m_NinjaSwitch,
 
-		m_pPlayer->m_AccData.m_Level,
-		m_pPlayer->m_AccData.m_ExpPoints);
+		GetPlayerExp());
 
 	fputs(aBuf, Accfile);
 	fclose(Accfile);
@@ -393,7 +412,7 @@ void CAccount::Reset()
 	m_pPlayer->m_AccData.m_Money = 0;
 	m_pPlayer->m_AccData.m_Health = 10;
 	m_pPlayer->m_AccData.m_Armor = 10;
-	m_pPlayer->m_Score = 0;
+	m_pPlayer->m_AccData.m_Level = 1;
 
 	m_pPlayer->m_AccData.m_Donor = 0;
 	m_pPlayer->m_AccData.m_VIP = 0;
@@ -430,7 +449,6 @@ void CAccount::Reset()
 	m_pPlayer->m_AccData.m_NinjaStart = 0;
 	m_pPlayer->m_AccData.m_NinjaSwitch = 0;
 
-	m_pPlayer->m_AccData.m_Level = 1;
 	m_pPlayer->m_AccData.m_ExpPoints = 0;
 
 }
@@ -441,7 +459,7 @@ void CAccount::Delete()
 	if(m_pPlayer->m_AccData.m_UserID)
 	{
 		Reset();
-		str_format(aBuf, sizeof(aBuf), "accounts/+%s.acc", m_pPlayer->m_AccData.m_Username);
+		str_format(aBuf, sizeof(aBuf), "accounts/%s.acc", m_pPlayer->m_AccData.m_Username);
 		std::remove(aBuf);
 		dbg_msg("account", "Account deleted ('%s')", m_pPlayer->m_AccData.m_Username);
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Account deleted!");
@@ -488,7 +506,7 @@ void CAccount::NewUsername(char *NewUsername)
 		return;
     }
 
-	str_format(aBuf, sizeof(aBuf), "accounts/+%s.acc", m_pPlayer->m_AccData.m_Username);
+	str_format(aBuf, sizeof(aBuf), "accounts/%s.acc", m_pPlayer->m_AccData.m_Username);
 	std::rename(aBuf, NewUsername);
 
 	str_copy(m_pPlayer->m_AccData.m_Username, NewUsername, 32);
@@ -506,9 +524,9 @@ int CAccount::NextID()
 	char aBuf[32];
 	char AccUserID[32];
 
-	str_copy(AccUserID, "accounts/++UserIDs++.acc", sizeof(AccUserID));
+	str_copy(AccUserID, "accounts/UserIDs++.acc", sizeof(AccUserID));
 
-	if(Exists("+UserIDs++"))
+	if(Exists("UserIDs++"))
 	{
 		Accfile = fopen(AccUserID, "r");
 		fscanf(Accfile, "%d", &UserID);

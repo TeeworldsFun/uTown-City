@@ -175,7 +175,6 @@ public:
 
 	class CCmd *m_pChatCmd;
 	class CAccount *m_pAccount;//(CPlayer *m_Player, CGameContext *gameserver);
-
 private:
 	CCharacter *m_pCharacter;
 	CGameContext *m_pGameServer;

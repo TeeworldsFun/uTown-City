@@ -1524,6 +1524,7 @@ bool CCharacter::Protected()
 
 void CCharacter::Tick()
 {
+	m_pPlayer->m_Score = m_pPlayer->m_AccData.m_Level;
 	if(m_pPlayer->m_ForceBalanced)
 	{
 		char Buf[128];
