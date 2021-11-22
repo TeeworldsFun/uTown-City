@@ -40,6 +40,7 @@ public:
 
 	void HandleWeapons();
 	void HandleNinja();
+	int m_RefreshTime;
 
 	void OnPredictedInput(CNetObj_PlayerInput *pNewInput);
 	void OnDirectInput(CNetObj_PlayerInput *pNewInput);
