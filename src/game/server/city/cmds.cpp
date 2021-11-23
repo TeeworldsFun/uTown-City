@@ -340,7 +340,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 	{
 		LastChat();
 		char aBuf[512];
-		str_format(aBuf, sizeof(aBuf), "            =HELP=\n\n\nOwn discord server: discord.gg/PVtGDSDPyq\n\n/me - Accountstats\n\n/register <username> <password>\n- e.g. /register con 123\n\n/login <username> <password>\n- e.g. /login con 123\n\n/rename <newname>\n- change account name\n\n/password <password>\n- change account password\n\n/logout\n- Logout?!\n\n/del\n- delete account");
+		str_format(aBuf, sizeof(aBuf), "            =HELP=\n\n\n/me - Accountstats\n\n/register <username> <password>\n- e.g. /register con 123\n\n/login <username> <password>\n- e.g. /login con 123\n\n/rename <newname>\n- change account name\n\n/password <password>\n- change account password\n\n/logout\n- Logout?!\n\n/del\n- delete account");
 		GameServer()->SendMotd(m_pPlayer->GetCID(), aBuf);
 		return;
 	}
@@ -348,7 +348,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 	{
 		LastChat();
 		char aBuf[512];
-		str_format(aBuf, sizeof(aBuf), "            =DONOR=\n\n\nWe accept donations of at least 10 Euro (as PaySafeCard) to fund our WebSite and Server. \nAs a little \"THANKS\" we'll enable some special stuff for you:\n\n- /Home (Own House - your Spawnpoint)\n\n- /Save, /Load (Position)\n\n- /Tele (Teleport to Cursor)\n\n- /Right, /Left, /Down, /Up (Walk through Walls)\n\n- /Crown (Crown as Stylistic Feature)\n\n- Money Tile (+1000TCs/Second)\n\n\n\nSpecial Thanks to r00t(old)、FlowerFell-Sans(new), for Server-Hosting, Support and Websitekeeping");
+		str_format(aBuf, sizeof(aBuf), "            =DONOR=\n\n\nWe accept donations of at least 10 Euro (as PaySafeCard) to fund our WebSite and Server. \nAs a little \"THANKS\" we'll enable some special stuff for you:\n\n- /Home (Own House - your Spawnpoint)\n\n- /Save, /Load (Position)\n\n- /Tele (Teleport to Cursor)\n\n- /Right, /Left, /Down, /Up (Walk through Walls)\n\n- /Crown (Crown as Stylistic Feature)\n\n- Money Tile (+1000TCs/Second)\n\n\n\nSpecial Thanks to r00t, for Server-Hosting, Support and Websitekeeping");
 		GameServer()->SendMotd(m_pPlayer->GetCID(), aBuf);
 		return;
 	}
@@ -356,7 +356,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 	{
 		LastChat();
 		char aBuf[512];
-		str_format(aBuf, sizeof(aBuf), "            =POLICE=\n\n\nHow to become a Police?\nWrite an Application on own discord server: discord.gg/PVtGDSDPyq (in english) and hope to be choosen...\n\nAvailable F2 - CMDs:\n\n- ban\n\n -bans\n\n- kick\n\n- jail\n\n- unjail\n\n- vote yes, no\n\n- status\n\n\nChat - Commands:\n\n- /JailRifle");
+		str_format(aBuf, sizeof(aBuf), "            =POLICE=\n\n\nHow to become a Police?\nWrite an Application on uTown-Tw.de (in english) and hope to be choosen...\n\nAvailable F2 - CMDs:\n\n- ban\n\n -bans\n\n- kick\n\n- jail\n\n- unjail\n\n- vote yes, no\n\n- status\n\n\nChat - Commands:\n\n- /JailRifle");
 		GameServer()->SendMotd(m_pPlayer->GetCID(), aBuf);
 		return;
 	}

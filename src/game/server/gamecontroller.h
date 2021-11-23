@@ -5,15 +5,6 @@
 
 #include <base/vmath.h>
 
-class CDoor;
-#ifdef _MSC_VER
-typedef __int32 int32_t;
-typedef unsigned __int32 uint32_t;
-typedef __int64 int64_t;
-typedef unsigned __int64 uint64_t;
-#else
-#include <stdint.h>
-#endif
 /*
 	Class: Game Controller
 		Controls the main game logic. Keeping track of team and player score,
@@ -21,8 +12,8 @@ typedef unsigned __int64 uint64_t;
 */
 class IGameController
 {
-	vec2 m_aaSpawnPoints[4][64];
-	int m_aNumSpawnPoints[4];
+	vec2 m_aaSpawnPoints[3][64];
+	int m_aNumSpawnPoints[3];
 
 	class CGameContext *m_pGameServer;
 	class IServer *m_pServer;

@@ -37,8 +37,6 @@ private:
 
 	class CGameContext *m_pGameServer;
 	class IServer *m_pServer;
-	
-	void UpdatePlayerMaps();
 
 public:
 	class CGameContext *GameServer() { return m_pGameServer; }

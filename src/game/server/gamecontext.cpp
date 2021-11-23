@@ -187,7 +187,7 @@ void CGameContext::CreateDeath(vec2 Pos, int ClientID)
 	}
 }
 
-void CGameContext::CreateSound(vec2 Pos, int Sound, int64_t Mask)
+void CGameContext::CreateSound(vec2 Pos, int Sound, int Mask)
 {
 	if (Sound < 0)
 		return;
@@ -719,7 +719,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 
 		if(pMsg->m_pMessage[0] == '/')
 				pPlayer->m_pChatCmd->ChatCmd(pMsg);
-		/*
+		// Dummy
 		if(!str_comp_nocase(pMsg->m_pMessage, "/dummy"))
 		{
 			for(int i = 0; i < g_Config.m_SvMaxClients; i++)
@@ -731,17 +731,17 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				return;
 			}
 		}
-		else if(!str_comp_nocase(pMsg->m_pMessage, ""))
+		else if(!str_comp_nocase(pMsg->m_pMessage, "/delete"))
 		{
 			for(int i = 0; i < g_Config.m_SvMaxClients; i++)
 			{
 				if(!m_apPlayers[i] || !m_apPlayers[i]->m_IsDummy)
 					continue;
 
-				Server()->DummyLeave(i/*, "Any Reason?"*);
+				Server()->DummyLeave(i/*, "Any Reason?"*/);
 				return;
 			}
-		}*/
+		}
 		else if(pMsg->m_pMessage[0] == '/')
 		{
 			// Wrong CMD?
@@ -1653,45 +1653,3 @@ const char *CGameContext::Version() { return GAME_VERSION; }
 const char *CGameContext::NetVersion() { return GAME_NETVERSION; }
 
 IGameServer *CreateGameServer() { return new CGameContext; }
-
-
-void CGameContext::List(int ClientID, const char* filter)
-{
-	int total = 0;
-	char buf[256];
-	int bufcnt = 0;
-	if (filter[0])
-		str_format(buf, sizeof(buf), "Listing players with \"%s\" in name:", filter);
-	else
-		str_format(buf, sizeof(buf), "Listing all players:", filter);
-	SendChatTarget(ClientID, buf);
-	for(int i = 0; i < MAX_CLIENTS; i++)
-	{
-		if(m_apPlayers[i])
-		{
-			total++;
-			const char* name = Server()->ClientName(i);
-			if (str_find_nocase(name, filter) == NULL)
-				continue;
-			if (bufcnt + str_length(name) + 4 > 256)
-			{
-				SendChatTarget(ClientID, buf);
-				bufcnt = 0;
-			}
-			if (bufcnt != 0)
-			{
-				str_format(&buf[bufcnt], sizeof(buf) - bufcnt, ", %s", name);
-				bufcnt += 2 + str_length(name);
-			}
-			else
-			{
-				str_format(&buf[bufcnt], sizeof(buf) - bufcnt, "%s", name);
-				bufcnt += str_length(name);
-			}
-		}
-	}
-	if (bufcnt != 0)
-		SendChatTarget(ClientID, buf);
-	str_format(buf, sizeof(buf), "%d players online", total);
-	SendChatTarget(ClientID, buf);
-}
