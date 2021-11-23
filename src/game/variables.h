@@ -38,6 +38,12 @@ MACRO_CONFIG_INT(EuHammerWalls, eu_hammer_walls, 72000, 0, 1000000, CFGFLAG_SERV
 MACRO_CONFIG_INT(EuHammerShot, eu_hammer_shot, 720000, 0, 1000000, CFGFLAG_SERVER, "Price - Hammer shot")
 MACRO_CONFIG_INT(EuHammerKill, eu_hammer_kill, 36000, 0, 1000000, CFGFLAG_SERVER, "Price - Hammer kill")
 
+MACRO_CONFIG_INT(SvMapUpdateRate, sv_mapupdaterate, 5, 1, 100, CFGFLAG_SERVER, "(Tw32) real id <-> vanilla id players map update rate")
+
+MACRO_CONFIG_INT(SvSkinStealAction, sv_skinstealaction, 0, 0, 1, CFGFLAG_SERVER, "How to punish skin stealing (currently only 1 = force pinky)")
+
+
+
 MACRO_CONFIG_INT(EuNinjaPermanent, eu_ninja_permanent, 180000, 0, 1000000, CFGFLAG_SERVER, "Price - Ninja permanent")
 MACRO_CONFIG_INT(EuNinjaStart, eu_ninja_start, 72000, 0, 1000000, CFGFLAG_SERVER, "Price - Ninja start")
 MACRO_CONFIG_INT(EuNinjaSwitch, eu_ninja_switch, 9000, 0, 1000000, CFGFLAG_SERVER, "Price - Ninja switch")

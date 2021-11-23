@@ -42,6 +42,7 @@ IGameController::IGameController(class CGameContext *pGameServer)
 	m_aNumSpawnPoints[0] = 0;
 	m_aNumSpawnPoints[1] = 0;
 	m_aNumSpawnPoints[2] = 0;
+	m_aNumSpawnPoints[3] = 0;
 }
 
 IGameController::~IGameController()
@@ -153,6 +154,8 @@ bool IGameController::OnEntity(int Index, vec2 Pos)
 		m_aaSpawnPoints[1][m_aNumSpawnPoints[1]++] = Pos;
 	else if(Index == ENTITY_INSTA_SPAWN)
 		m_aaSpawnPoints[2][m_aNumSpawnPoints[2]++] = Pos;
+	else if(Index == ENTITY_DUMMY_SPAWN)
+		m_aaSpawnPoints[3][m_aNumSpawnPoints[3]++] = Pos;
 	else if(Index == ENTITY_ARMOR_1)
 		Type = POWERUP_ARMOR;
 	else if(Index == ENTITY_HEALTH_1)
