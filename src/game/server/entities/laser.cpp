@@ -61,9 +61,10 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
   		str_format(zBuf, sizeof zBuf, "'%s' is arrested now", Server()->ClientName(Hit->GetPlayer()->GetCID()));
 		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, zBuf);
 	}
-	else if(!OwnerChar->GetPlayer()->m_Insta && !Hit->GetPlayer()->m_Insta)
+	else if(!OwnerChar->GetPlayer()->m_Insta && !Hit->GetPlayer()->m_Insta && !OwnerChar->GetPlayer()->m_Fng && !Hit->GetPlayer()->m_Fng)
 		Hit->TakeDamage(vec2(0.f, 0.f), GameServer()->Tuning()->m_LaserDamage, m_Owner, WEAPON_RIFLE);
-	
+	else if(OwnerChar->GetPlayer()->m_Fng && Hit->GetPlayer()->m_Fng)
+		Hit->Freeze(9);
 	// City
 	if(OwnerChar && !Hit->GetPlayer()->m_AccData.m_Arrested && !Hit->GetPlayer()->m_Insta && !Hit->Protected())
 	{

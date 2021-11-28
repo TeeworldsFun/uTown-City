@@ -165,6 +165,7 @@ public:
 	int m_RainbowColor;
 	bool m_Rainbow;
 	bool m_Insta;
+	bool m_Fng;
 	int m_AciveUpgrade[NUM_WEAPONS];
 	int m_Authed;
 	char m_aRank[64];

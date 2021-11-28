@@ -74,7 +74,7 @@ void CProjectile::Tick()
 
 	if(TargetChr)
 	{
-		if(TargetChr->GetPlayer()->m_Insta)
+		if(TargetChr->GetPlayer()->m_Insta || TargetChr->GetPlayer()->m_Fng)
 			return;
 	}
 

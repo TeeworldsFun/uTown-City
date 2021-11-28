@@ -63,9 +63,17 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 {
 	m_EmoteStop = -1;
 	m_LastAction = -1;
-	m_ActiveWeapon = pPlayer->m_Insta?WEAPON_RIFLE:WEAPON_GUN;
+	if(pPlayer->m_Insta || pPlayer->m_Fng)
+	{
+		m_ActiveWeapon = WEAPON_RIFLE;
+	}
+	else
+	{
+		m_ActiveWeapon = WEAPON_GUN;
+	}
+	//m_ActiveWeapon = pPlayer->m_Insta?WEAPON_RIFLE:WEAPON_GUN;
 
-	if(pPlayer->m_Insta)
+	if(pPlayer->m_Insta || pPlayer->m_Fng)
 		m_aWeapons[WEAPON_RIFLE].m_Ammo = 10;
 
 	m_LastWeapon = WEAPON_HAMMER;
@@ -87,7 +95,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_Alive = true;
 
 	// City
-	if(!m_pPlayer->m_Insta)
+	if(!m_pPlayer->m_Insta && !m_pPlayer->m_Fng)
 	{
 		m_Protected = true;
 		m_Core.m_Protected = true;
@@ -105,7 +113,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	new CGui(GameWorld(), m_pPlayer->GetCID());
 	new CCrown(GameWorld(), m_pPlayer->GetCID());
 
-	if(!m_pPlayer->m_Insta)
+	if(!m_pPlayer->m_Insta && !m_pPlayer->m_Fng)
 		new CSpawProtect(GameWorld(), m_pPlayer->GetCID());
 
 	m_GameZone = false;
@@ -571,7 +579,7 @@ void CCharacter::FireWeapon()
 			{
 				CCharacter *pTarget = apEnts[i];
 
-				if ((pTarget == this) || GameServer()->Collision()->IntersectLine(ProjStartPos, pTarget->m_Pos, NULL, NULL) || pTarget->GetPlayer()->m_Insta)
+				if ((pTarget == this) || GameServer()->Collision()->IntersectLine(ProjStartPos, pTarget->m_Pos, NULL, NULL) || pTarget->GetPlayer()->m_Insta || pTarget->GetPlayer()->m_Fng)
 					continue;
 
 				// set his velocity to fast upward (for now)
@@ -822,7 +830,7 @@ void CCharacter::FireWeapon()
 			if(m_Protected && !m_JailRifle)
 				return;
 
-			if(!m_pPlayer->m_Insta && !m_GameZone && !m_JailRifle)
+			if(!m_pPlayer->m_Insta && !m_pPlayer->m_Fng  && !m_GameZone && !m_JailRifle)
 			{
 				if(m_pPlayer->m_AccData.m_RiflePlasma && m_pPlayer->m_AciveUpgrade[m_ActiveWeapon] == 1)
 				{
@@ -875,12 +883,12 @@ void CCharacter::FireWeapon()
 
 	m_AttackTick = Server()->Tick();
 
-	if(m_aWeapons[m_ActiveWeapon].m_Ammo > 0 && !m_pPlayer->m_AccData.m_InfinityAmmo && !m_pPlayer->m_Insta && !m_GameZone) // -1 == unlimited
+	if(m_aWeapons[m_ActiveWeapon].m_Ammo > 0 && !m_pPlayer->m_AccData.m_InfinityAmmo && !m_pPlayer->m_Insta && !m_pPlayer->m_Fun && !m_GameZone) // -1 == unlimited
 		m_aWeapons[m_ActiveWeapon].m_Ammo--;
 
 	if(!m_ReloadTimer)
 	{
-		if(!m_pPlayer->m_Insta && !m_GameZone)
+		if(!m_pPlayer->m_Insta && !m_pPlayer->m_Fun && !m_GameZone)
 			m_ReloadTimer = g_pData->m_Weapons.m_aId[m_ActiveWeapon].m_Firedelay /(m_pPlayer->m_AccData.m_FastReload + 1) * Server()->TickSpeed() / 1000;
 		else
 			m_ReloadTimer = g_pData->m_Weapons.m_aId[m_ActiveWeapon].m_Firedelay * Server()->TickSpeed()/1000;
@@ -1537,7 +1545,7 @@ void CCharacter::Tick()
 	// City
 	HandleCity();
 
-	if(!m_Frozen && !m_pPlayer->m_Insta && !m_GameZone && !m_Water && !m_SingleWater)
+	if(!m_Frozen && !m_pPlayer->m_Insta && !m_pPlayer->m_Fng && !m_GameZone && !m_Water && !m_SingleWater)
 	{
 		
 		if(m_pPlayer->m_AccData.m_InfinityJumps == 1)
@@ -1745,7 +1753,7 @@ void CCharacter::Die(int Killer, int Weapon)
 
 bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 {
-	if((Protected() && !m_GameZone) || m_God || m_pPlayer->m_Insta)
+	if((Protected() && !m_GameZone) || m_God || m_pPlayer->m_Insta || m_pPlayer->m_Fng)
 		return false;
 
 	m_Core.m_Vel += Force;

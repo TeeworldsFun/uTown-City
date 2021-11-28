@@ -17,6 +17,8 @@
 #include "gameworld.h"
 #include "player.h"
 
+#include <minecity/components/localization.h>
+
 /*
 	Tick
 		Game Context (CGameContext::tick)
@@ -199,6 +201,18 @@ public:
 	//int m_TeleID[MAX_CLIENTS];
 
 };
+
+public:
+	virtual void SendBroadcast_Localization(int To, int Priority, int LifeSpan, const char* pText, ...);
+	virtual void SendBroadcast_Localization_P(int To, int Priority, int LifeSpan, int Number, const char* pText, ...);
+	virtual void SendBroadcast_ClassIntro(int To, int Class);
+	virtual void ClearBroadcast(int To, int Priority);
+	
+	virtual void SendChatTarget_Localization(int To, int Category, const char* pText, ...);
+	virtual void SendChatTarget_Localization_P(int To, int Category, int Number, const char* pText, ...);
+	
+	virtual void SendMOTD(int To, const char* pParam);
+	virtual void SendMOTD_Localization(int To, const char* pText, ...);
 
 inline int CmaskAll() { return -1; }
 inline int CmaskOne(int ClientID) { return 1<<ClientID; }

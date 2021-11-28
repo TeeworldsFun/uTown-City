@@ -99,6 +99,8 @@ public:
 	int m_LifeCost;
 	//Save/Load
 	vec2 m_SavePos;
+	//SoloFng
+	int m_FngKills
 	
 
 	bool m_God;

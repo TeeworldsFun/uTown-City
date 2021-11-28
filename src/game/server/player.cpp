@@ -26,6 +26,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	// City
 	m_Rainbow = false;
 	m_Insta = false;
+	m_Fng = false;
 	m_pAccount = new CAccount(this, m_pGameServer);
 	m_pChatCmd = new CCmd(this, m_pGameServer);
 
@@ -118,6 +119,8 @@ void CPlayer::Tick()
 			GameServer()->SendBroadcast(aBuf, GetCID());
 			if(m_Insta)
 				m_Insta = false;
+			if(m_Fng)
+				m_Fng = false;
 			if(m_AccData.m_Arrested && Server()->Tick()%50 == 0)
 				m_AccData.m_Arrested--;
 		}
@@ -376,10 +379,13 @@ void CPlayer::TryRespawn()
 
 	if(m_Insta)
 	{
-	if(!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos, m_Insta?2:0))
-		return;
+		if(!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos, m_Insta?2:0))
+			return;
 	}
-	else
+	else if(m_Fng)
+	{
+		if(!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos, m_Fng?3:0)
+	}
 	{
 		if(!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos, m_AccData.m_Arrested?1:0))
 		return;

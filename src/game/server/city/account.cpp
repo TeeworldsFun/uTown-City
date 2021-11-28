@@ -6,6 +6,8 @@
 #include <engine/config.h>
 #include "account.h"
 #include "game/server/gamecontroller.h"
+#include "game/server/gamecontext.h"
+//#include "minecity/components/localization.h"
 
 #if defined(CONF_FAMILY_WINDOWS)
 	#include <tchar.h>
@@ -60,13 +62,15 @@ void CAccount::Login(char *Username, char *Password)
 	if(m_pPlayer->m_AccData.m_UserID)
 	{
 		dbg_msg("account", "Account login failed ('%s' - Already logged in)", Username);
-		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Already logged in");
+		//GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Already logged in");
+		SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGROY_ACCOUNT, "Already logged in");
 		return;
 	}
 	else if(strlen(Username) > 15 || !strlen(Username))
 	{
 		str_format(aBuf, sizeof(aBuf), "Username too %s", strlen(Username)?"long":"short");
-		GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
+		//GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
+		SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, aBuf);
 		return;
     }
 	else if(strlen(Password) > 15 || !strlen(Password))
@@ -80,9 +84,9 @@ void CAccount::Login(char *Username, char *Password)
 		dbg_msg("account", "Account login failed ('%s' - Missing)", Username);
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "This account does not exist.");
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Please register first. (/register <user> <pass>)");
-		return;
-	}
-
+		return;// FNG没写完 你去mapitem.h的TILE_*结尾，加一个TILE_FNG_CHECK,
+	}// ok
+	// 或者你在languages-dump.json里写所有的对话信息，我去写点作业
 	str_format(aBuf, sizeof(aBuf), "accounts/%s.acc", Username);
 
 	char AccUsername[32];
@@ -144,7 +148,7 @@ void CAccount::Login(char *Username, char *Password)
 		m_pPlayer->m_AccData.m_RconPassword, 
 		&m_pPlayer->m_AccData.m_UserID, // Done
 
-		&m_pPlayer->m_AccData.m_HouseID,
+		&m_pPlayer->m_AccData.m_HouseID, // Done
  		&m_pPlayer->m_AccData.m_Money, // Done
 		&m_pPlayer->m_AccData.m_Health, // Done
 		&m_pPlayer->m_AccData.m_Armor, // Done

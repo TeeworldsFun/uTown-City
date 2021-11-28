@@ -127,7 +127,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 	else if(!str_comp_nocase(Msg->m_pMessage, "/home") || !str_comp_nocase(Msg->m_pMessage, "/house"))
 	{
 		LastChat();
-		if(!m_pPlayer->m_AccData.m_Donor || !m_pPlayer->m_AccData.m_UserID)
+		if(/*!m_pPlayer->m_AccData.m_Donor || */!m_pPlayer->m_AccData.m_UserID)
 		{
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Access denied");
 			return;
@@ -136,7 +136,6 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		CCharacter *pOwner = GameServer()->GetPlayerChar(m_pPlayer->GetCID());
 		
 		if(pOwner && pOwner->IsAlive())
-		{
 			pOwner->m_Home = m_pPlayer->m_AccData.m_HouseID;
 			dbg_msg("-.-", "/home: %i", pOwner->m_Home);
 		}
@@ -178,7 +177,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 	{
 		LastChat();
 
-		if(m_pPlayer->m_Score > 20)
+		if(m_pPlayer->m_AccData.m_Level > 20)
 		{
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Invisibility for player with score less than 20");
 			return;
@@ -187,6 +186,12 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		if(m_pPlayer->m_Insta)
 		{
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Cmd is not allowed while playing instagib");
+			return;
+		}
+
+		if(m_pPlayer->m_Fng)
+		{
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Cmd is not allowed while playing fng");
 			return;
 		}
 
@@ -309,6 +314,36 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		}
 		return;
     }
+	else if(!str_comp_nocase(Msg->m_pMessage, "/fng") || !str_comp_nocase(Msg->m_pMessage, "/solofng"))
+    {
+		LastChat();
+		char aBuf[200];	
+		if(!g_Config.m_EnableFng)
+		{
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Fng is not enabled on this server");
+			return;
+		}
+		if(m_pPlayer->m_AccData.m_Arrested)
+		{
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You are not permitted to join fng.");
+			return;
+		}
+		CCharacter *pOwner = GameServer()->GetPlayerChar(m_pPlayer->GetCID());
+		if(pOwner && pOwner->IsAlive())
+		{
+			m_pPlayer->m_Fng^=1;
+			str_format(aBuf, sizeof(aBuf), "%s %s Fng",GameServer()->Server()->ClientName(m_pPlayer->GetCID()),m_pPlayer->m_Fng?"joined":"left");
+			m_pPlayer->GetCharacter()->Die(m_pPlayer->GetCID(), WEAPON_GAME);
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		}
+		else
+		{
+			m_pPlayer->m_Fng^=1;
+			str_format(aBuf, sizeof(aBuf), "%s %s Fng",GameServer()->Server()->ClientName(m_pPlayer->GetCID()),m_pPlayer->m_Fng?"joined":"left");
+			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		}
+		return;
+    }
 	if(!strncmp(Msg->m_pMessage, "/transfer", 9))
 	{
 		LastChat();
@@ -331,7 +366,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 	{
 		LastChat();
 		char aBuf[512];
-		str_format(aBuf, sizeof(aBuf), "            =CMD-LIST=\n\n\n/info - Some information\n\n/invi - Invisibility (Score < 20)\n\n/rainbow - Rainbow colors\n\n/help - Accounthelp\n\n/me - Accountstats\n\n/transfer <money>\n\n/donor, /police - What is it?");
+		str_format(aBuf, sizeof(aBuf), "            =CMD-LIST=\n\n\n/info - Some information\n\n/invi - Invisibility (Level < 20)\n\n/rainbow - Rainbow colors\n\n/help - Accounthelp\n\n/me - Accountstats\n\n/transfer <money>\n\n/donor, /police - What is it?");
 		GameServer()->SendMotd(m_pPlayer->GetCID(), aBuf);
 
 		return;
