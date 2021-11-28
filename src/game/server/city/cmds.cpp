@@ -127,11 +127,12 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 	else if(!str_comp_nocase(Msg->m_pMessage, "/home") || !str_comp_nocase(Msg->m_pMessage, "/house"))
 	{
 		LastChat();
-		if(/*!m_pPlayer->m_AccData.m_Donor || */!m_pPlayer->m_AccData.m_UserID)
+		/*if(!m_pPlayer->m_AccData.m_Donor || !m_pPlayer->m_AccData.m_UserID)
 		{
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Access denied");
 			return;
 		}
+		*/
 
 		CCharacter *pOwner = GameServer()->GetPlayerChar(m_pPlayer->GetCID());
 		
@@ -142,7 +143,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 
 		return;
 
-	}
+	} 
 	else if(!str_comp_nocase(Msg->m_pMessage, "/jailrifle"))
 	{
 		LastChat();
