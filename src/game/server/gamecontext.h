@@ -200,8 +200,6 @@ public:
 	int m_TeleNum;
 	//int m_TeleID[MAX_CLIENTS];
 
-};
-
 public:
 	virtual void SendBroadcast_Localization(int To, int Priority, int LifeSpan, const char* pText, ...);
 	virtual void SendBroadcast_Localization_P(int To, int Priority, int LifeSpan, int Number, const char* pText, ...);
@@ -213,6 +211,9 @@ public:
 	
 	virtual void SendMOTD(int To, const char* pParam);
 	virtual void SendMOTD_Localization(int To, const char* pText, ...);
+};
+//出bug了 我正在修复 那个小白鼠有什么问题 不在Accounts文件夹,而且格式也不是*.acc是:hand 而且还有一个叫1的账号,也不是acc文件 没有任何后缀
+//游客也会有acc档案对吧 不知道啊 我估计是游客（
 
 inline int CmaskAll() { return -1; }
 inline int CmaskOne(int ClientID) { return 1<<ClientID; }
