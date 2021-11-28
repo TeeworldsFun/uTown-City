@@ -100,7 +100,7 @@ public:
 	//Save/Load
 	vec2 m_SavePos;
 	//SoloFng
-	int m_FngKills
+	int m_FngKills;
 	
 
 	bool m_God;
