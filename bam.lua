@@ -2,8 +2,9 @@ CheckVersion("0.4")
 
 Import("configure.lua")
 Import("other/sdl/sdl.lua")
+Import("other/icu/icu.lua")
 Import("other/freetype/freetype.lua")
-
+-- 那段乱码能不能反推原文 不知道 乱码一般是不是用unicode存utf-8 这应该是编码问题
 --- Setup Config -------
 config = NewConfig()
 config:Add(OptCCompiler("compiler"))
