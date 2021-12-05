@@ -75,6 +75,16 @@ public:
 	virtual void DummyLeave(int DummyID, const char *pDummyName = 0) = 0;
 };
 
+enum
+{
+	CHATCATEGORY_SYSTEM=0,
+	CHATCATEGORY_FNG,
+	CHATCATEGORY_JAIL,
+	CHATCATEGORY_ACCOUNT,
+	CHATCATEGORY_MAINCITY,
+	CHATCATEGORY_INSTA,
+};
+
 class IGameServer : public IInterface
 {
 	MACRO_INTERFACE("gameserver", 0)

@@ -30,6 +30,8 @@
 #include "register.h"
 #include "server.h"
 
+#include <minecity/components/localization.h>
+
 #if defined(CONF_FAMILY_WINDOWS)
 	#define _WIN32_WINNT 0x0501
 	#define WIN32_LEAN_AND_MEAN
@@ -169,6 +171,7 @@ void CServer::CClient::Reset()
 	m_SnapRate = CClient::SNAPRATE_INIT;
 	m_Score = 0;
 	m_AccID = -1;
+	str_copy(m_aLanguage, "en", sizeof(m_aLanguage));
 }
 
 CServer::CServer() : m_DemoRecorder(&m_SnapshotDelta)
@@ -1797,6 +1800,15 @@ int main(int argc, const char **argv) // ignore_convention
 	IStorage *pStorage = CreateStorage("Teeworlds", argc, argv); // ignore_convention
 	IConfig *pConfig = CreateConfig();
 
+
+	pServer->m_pLocalization = new CLocalization(pStorage);
+	pServer->m_pLocalization->InitConfig(0, NULL);
+	if(!pServer->m_pLocalization->Init())
+	{
+		dbg_msg("localization", "could not initialize localization");
+		return -1;
+	}
+
 	pServer->InitRegister(&pServer->m_NetServer, pEngineMasterServer, pConsole);
 
 	{
@@ -1844,6 +1856,7 @@ int main(int argc, const char **argv) // ignore_convention
 
 	// free
 	delete pServer;
+	delete pServer->m_pLocalization;
 	delete pKernel;
 	delete pEngineMap;
 	delete pGameServer;
@@ -1854,3 +1867,12 @@ int main(int argc, const char **argv) // ignore_convention
 	return 0;
 }
 
+const char* CServer::GetClientLanguage(int ClientID)
+{
+	return m_aClients[ClientID].m_aLanguage;
+}
+
+void CServer::SetClientLanguage(int ClientID, const char* pLanguage)
+{
+	str_copy(m_aClients[ClientID].m_aLanguage, pLanguage, sizeof(m_aClients[ClientID].m_aLanguage));
+}

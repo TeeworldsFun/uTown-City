@@ -128,6 +128,7 @@ public:
 	int m_RunServer;
 	int m_MapReload;
 	int m_RconClientID;
+	char m_aLanguage[16];
 	int m_RconAuthLevel;
 	int m_PrintCBIndex;
 
@@ -237,6 +238,9 @@ public:
 	virtual void SnapFreeID(int ID);
 	virtual void *SnapNewItem(int Type, int ID, int Size);
 	void SnapSetStaticsize(int ItemType, int Size);
+
+	virtual const char* GetClientLanguage(int ClientID);
+	virtual void SetClientLanguage(int ClientID, const char* pLanguage);
 };
 
 #endif

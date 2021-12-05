@@ -360,7 +360,7 @@ void CGameContext::SendChatTarget_Localization(int To, int Category, const char*
 				case CHATCATEGORY_INSTA:
 					Buffer.append("[INSTA] ");
 					break;
-				case CHATCATEGORY_ACC:
+				case CHATCATEGORY_ACCOUNT:
 					Buffer.append("[ACCOUNT] ");
 					break;
 				case CHATCATEGORY_MAINCITY:
@@ -410,7 +410,7 @@ void CGameContext::SendChatTarget_Localization_P(int To, int Category, int Numbe
 				case CHATCATEGORY_INSTA:
 					Buffer.append("[INSTA] ");
 					break;
-				case CHATCATEGORY_ACC:
+				case CHATCATEGORY_ACCOUNT:
 					Buffer.append("[ACCOUNT] ");
 					break;
 				case CHATCATEGORY_MAINCITY:
