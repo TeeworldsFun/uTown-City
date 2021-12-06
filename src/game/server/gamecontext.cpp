@@ -588,6 +588,8 @@ void CGameContext::OnTick()
 	// check tuning
 	CheckPureTuning();
 
+	m_Collision.SetTime(m_pController->GetTime());
+
 	// copy tuning
 	m_World.m_Core.m_Tuning = m_Tuning;
 	m_World.Tick();
@@ -1722,8 +1724,34 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 	//	game.players[i].core.world = &game.world.core;
 
 	// create all entities from the game layer
-	CMapItemLayerTilemap *pTileMap = m_Layers.GameLayer();
-	CTile *pTiles = (CTile *)Kernel()->RequestInterface<IMap>()->GetData(pTileMap->m_Data);
+	if(m_Layers.EntityGroup())
+	{
+		char aLayerName[12];
+
+		const CMapItemGroup* pGroup = m_Layers.EntityGroup();
+		for(int l = 0; l < pGroup->m_NumLayers; l++)
+		{
+			CMapItemLayer *pLayer = m_Layers.GetLayer(pGroup->m_StartLayer+l);
+			if(pLayer->m_Type == LAYERTYPE_QUADS)
+			{
+				CMapItemLayerQuads *pQLayer = (CMapItemLayerQuads *)pLayer;
+
+				IntsToStr(pQLayer->m_aName, sizeof(aLayerName)/sizeof(int), aLayerName);
+
+				const CQuad *pQuads = (const CQuad *) Kernel()->RequestInterface<IMap>()->GetDataSwapped(pQLayer->m_Data);
+
+				for(int q = 0; q < pQLayer->m_NumQuads; q++)
+				{
+					vec2 P0(fx2f(pQuads[q].m_aPoints[0].x), fx2f(pQuads[q].m_aPoints[0].y));
+					vec2 P1(fx2f(pQuads[q].m_aPoints[1].x), fx2f(pQuads[q].m_aPoints[1].y));
+					vec2 P2(fx2f(pQuads[q].m_aPoints[2].x), fx2f(pQuads[q].m_aPoints[2].y));
+					vec2 P3(fx2f(pQuads[q].m_aPoints[3].x), fx2f(pQuads[q].m_aPoints[3].y));
+					vec2 Pivot(fx2f(pQuads[q].m_aPoints[4].x), fx2f(pQuads[q].m_aPoints[4].y));
+					m_pController->OnEntity(aLayerName, Pivot, P0, P1, P2, P3, pQuads[q].m_PosEnv);
+				}
+			}
+		}
+	}
 
 
 

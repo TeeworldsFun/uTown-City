@@ -46,6 +46,10 @@ class CServer : public IServer
 	class IGameServer *m_pGameServer;
 	class IConsole *m_pConsole;
 	class IStorage *m_pStorage;
+
+public:
+	class CLocalization* m_pLocalization;
+
 public:
 	class IGameServer *GameServer() { return m_pGameServer; }
 	class IConsole *Console() { return m_pConsole; }
@@ -59,7 +63,7 @@ public:
 
 		MAX_RCONCMD_SEND=16,
 	};
-
+	inline class CLocalization* Localization() { return m_pLocalization; }
 	class CClient
 	{
 	public:
@@ -102,6 +106,7 @@ public:
 
 		char m_aName[MAX_NAME_LENGTH];
 		char m_aClan[MAX_CLAN_LENGTH];
+		char m_aLanguage[16];
 		int m_Country;
 		int m_Score;
 		int m_Authed;

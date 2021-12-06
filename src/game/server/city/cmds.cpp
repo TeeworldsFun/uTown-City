@@ -137,12 +137,12 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		CCharacter *pOwner = GameServer()->GetPlayerChar(m_pPlayer->GetCID());
 		
 		if(pOwner && pOwner->IsAlive())
+		{
 			pOwner->m_Home = m_pPlayer->m_AccData.m_HouseID;
 			dbg_msg("-.-", "/home: %i", pOwner->m_Home);
 		}
 
 		return;
-
 	} 
 	else if(!str_comp_nocase(Msg->m_pMessage, "/jailrifle"))
 	{

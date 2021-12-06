@@ -71,9 +71,11 @@ class CGameContext : public IGameServer
 	bool m_Resetting;
 public:
 	IServer *Server() const { return m_pServer; }
+	IStorage *Storage() const { return m_pStorage; }
 	class IConsole *Console() { return m_pConsole; }
 	CCollision *Collision() { return &m_Collision; }
 	CTuningParams *Tuning() { return &m_Tuning; }
+	virtual class CLayers *Layers() { return &m_Layers; }
 
 	CGameContext();
 	~CGameContext();
@@ -207,6 +209,7 @@ public:
 	virtual void ClearBroadcast(int To, int Priority);
 	
 	virtual void SendChatTarget_Localization(int To, int Category, const char* pText, ...);
+	void AddBroadcast(int ClientID, const char* pText, int Priority, int LifeSpan);
 	virtual void SendChatTarget_Localization_P(int To, int Category, int Number, const char* pText, ...);
 	
 	virtual void SendMOTD(int To, const char* pParam);

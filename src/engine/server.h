@@ -103,7 +103,7 @@ public:
 
 	virtual void OnClientConnected(int ClientID) = 0;
 	virtual void OnClientEnter(int ClientID) = 0;
-	virtual void OnClientDrop(int ClientID, const char *pReason) = 0;
+	virtual void OnClientDrop(int ClientID, int Type, const char *pReason) = 0;
 	virtual void OnClientDirectInput(int ClientID, void *pInput) = 0;
 	virtual void OnClientPredictedInput(int ClientID, void *pInput) = 0;
 
@@ -113,7 +113,19 @@ public:
 	virtual const char *GameType() = 0;
 	virtual const char *Version() = 0;
 	virtual const char *NetVersion() = 0;
+	
+	virtual class CLayers *Layers() = 0;
+	
+	virtual void ClearBroadcast(int To, int Priority) = 0;
+	virtual void SendBroadcast_Localization(int To, int Priority, int LifeSpan, const char* pText, ...) = 0;
+	virtual void SendBroadcast_Localization_P(int To, int Priority, int LifeSpan, int Number, const char* pText, ...) = 0;
+	virtual void SendChatTarget(int To, const char* pText) = 0;
+	virtual void SendChatTarget_Localization(int To, int Category, const char* pText, ...) = 0;
+	virtual void SendChatTarget_Localization_P(int To, int Category, int Number, const char* pText, ...) = 0;
+	virtual void SendMOTD(int To, const char* pText) = 0;
+	virtual void SendMOTD_Localization(int To, const char* pText, ...) = 0;
 };
 
 extern IGameServer *CreateGameServer();
+
 #endif

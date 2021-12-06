@@ -883,12 +883,12 @@ void CCharacter::FireWeapon()
 
 	m_AttackTick = Server()->Tick();
 
-	if(m_aWeapons[m_ActiveWeapon].m_Ammo > 0 && !m_pPlayer->m_AccData.m_InfinityAmmo && !m_pPlayer->m_Insta && !m_pPlayer->m_Fun && !m_GameZone) // -1 == unlimited
+	if(m_aWeapons[m_ActiveWeapon].m_Ammo > 0 && !m_pPlayer->m_AccData.m_InfinityAmmo && !m_pPlayer->m_Insta && !m_pPlayer->m_Fng && !m_GameZone) // -1 == unlimited
 		m_aWeapons[m_ActiveWeapon].m_Ammo--;
 
 	if(!m_ReloadTimer)
 	{
-		if(!m_pPlayer->m_Insta && !m_pPlayer->m_Fun && !m_GameZone)
+		if(!m_pPlayer->m_Insta && !m_pPlayer->m_Fng && !m_GameZone)
 			m_ReloadTimer = g_pData->m_Weapons.m_aId[m_ActiveWeapon].m_Firedelay /(m_pPlayer->m_AccData.m_FastReload + 1) * Server()->TickSpeed() / 1000;
 		else
 			m_ReloadTimer = g_pData->m_Weapons.m_aId[m_ActiveWeapon].m_Firedelay * Server()->TickSpeed()/1000;
@@ -1918,3 +1918,4 @@ void CCharacter::Snap(int SnappingClient)
 
 			
 }
+
