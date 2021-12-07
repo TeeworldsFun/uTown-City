@@ -395,11 +395,12 @@ void CPlayer::TryRespawn()
 	else if(m_Fng)
 	{
 		if(!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos, m_Fng?3:0))
+			return;
 	}
 	else
 	{
 		if(!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos, m_AccData.m_Arrested?1:0))
-		return;
+			return;
 	}
 
 	m_Spawning = false;

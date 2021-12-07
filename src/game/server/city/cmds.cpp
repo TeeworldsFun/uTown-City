@@ -282,7 +282,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
     {
 		LastChat();
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "\nuTown by Pikotee & KlickFoot");
-		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "\nuTown-City by FlowerFell-Sans ModReleaseVersion: v%s", GAME_RELEASE_VERSION);
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "\nuTown-City by FlowerFell-Sans ModReleaseVersion: v2.1.3");
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "\nDon't trust Blunk(Torben Weiss) and QuickTee/r00t they're stealing mods...");
 		return;
     }

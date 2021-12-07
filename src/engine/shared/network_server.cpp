@@ -124,7 +124,7 @@ void CNetServer::BanRemoveByObject(CBan *pBan)
 					pBan->m_Info.m_Addr.ip[8]+pBan->m_Info.m_Addr.ip[9]+pBan->m_Info.m_Addr.ip[10]+pBan->m_Info.m_Addr.ip[11]+
 					pBan->m_Info.m_Addr.ip[12]+pBan->m_Info.m_Addr.ip[13]+pBan->m_Info.m_Addr.ip[14]+pBan->m_Info.m_Addr.ip[15])&0xff;
 	char aAddrStr[NETADDR_MAXSTRSIZE];
-	net_addr_str(&pBan->m_Info.m_Addr, aAddrStr, sizeof(aAddrStr));
+	net_addr_str(&pBan->m_Info.m_Addr, aAddrStr, sizeof(aAddrStr), true);
 	dbg_msg("netserver", "removing ban on %s", aAddrStr);
 	MACRO_LIST_UNLINK(pBan, m_BanPool_FirstUsed, m_pPrev, m_pNext);
 	MACRO_LIST_UNLINK(pBan, m_aBans[IpHash], m_pHashPrev, m_pHashNext);

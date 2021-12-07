@@ -18,6 +18,7 @@
 #include <iostream>
 #include <algorithm>
 
+#
 enum
 {
 	RESET,
@@ -81,6 +82,15 @@ void CGameContext::Clear()
 	m_pVoteOptionLast = pVoteOptionLast;
 	m_NumVoteOptions = NumVoteOptions;
 	m_Tuning = Tuning;
+
+	for(int i=0; i<MAX_CLIENTS; i++)
+	{
+		m_BroadcastStates[i].m_NoChangeTick = 0;
+		m_BroadcastStates[i].m_LifeSpanTick = 0;
+		m_BroadcastStates[i].m_Priority = BROADCAST_PRIORITY_LOWEST;
+		m_BroadcastStates[i].m_PrevMessage[0] = 0;
+		m_BroadcastStates[i].m_NextMessage[0] = 0;
+	}
 }
 
 
@@ -300,7 +310,7 @@ void CGameContext::SendBroadcast_Localization(int To, int Priority, int LifeSpan
 		if(m_apPlayers[i])
 		{
 			Buffer.clear();
-			Server()->Localization()->Format_VL(Buffer, m_apPlayers[i]->GetLanguage(), pText, VarArgs);
+			Server()->m_pLocalization->Format_VL(Buffer, m_apPlayers[i]->GetLanguage(), pText, VarArgs);
 			AddBroadcast(i, Buffer.buffer(), Priority, LifeSpan);
 		}
 	}
@@ -322,7 +332,7 @@ void CGameContext::SendBroadcast_Localization_P(int To, int Priority, int LifeSp
 	{
 		if(m_apPlayers[i])
 		{
-			Server()->Localization()->Format_VLP(Buffer, m_apPlayers[i]->GetLanguage(), Number, pText, VarArgs);
+			Server()->m_pLocalization->Format_VLP(Buffer, m_apPlayers[i]->GetLanguage(), Number, pText, VarArgs);
 			AddBroadcast(i, Buffer.buffer(), Priority, LifeSpan);
 		}
 	}
@@ -375,7 +385,7 @@ void CGameContext::SendChatTarget_Localization(int To, int Category, const char*
 					Buffer.append("!!! ");// 不用翻译这里
 					break;
 			}
-			Server()->Localization()->Format_VL(Buffer, m_apPlayers[i]->GetLanguage(), pText, VarArgs);
+			Server()->m_pLocalization->Format_VL(Buffer, m_apPlayers[i]->GetLanguage(), pText, VarArgs);
 			
 			Msg.m_pMessage = Buffer.buffer();
 			Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, i);
@@ -425,7 +435,7 @@ void CGameContext::SendChatTarget_Localization_P(int To, int Category, int Numbe
 					Buffer.append("!!! ");
 					break;
 			}
-			Server()->Localization()->Format_VLP(Buffer, m_apPlayers[i]->GetLanguage(), Number, pText, VarArgs);
+			Server()->m_pLocalization->Format_VLP(Buffer, m_apPlayers[i]->GetLanguage(), Number, pText, VarArgs);
 			
 			Msg.m_pMessage = Buffer.buffer();
 			Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, i);
@@ -433,6 +443,58 @@ void CGameContext::SendChatTarget_Localization_P(int To, int Category, int Numbe
 	}
 	
 	va_end(VarArgs);
+}
+
+void CGameContext::SendMOTD(int To, const char* pText)
+{
+	if(m_apPlayers[To])
+	{
+		CNetMsg_Sv_Motd Msg;
+		
+		Msg.m_pMessage = pText;
+		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, To);
+	}
+}
+
+void CGameContext::SendMOTD_Localization(int To, const char* pText, ...)
+{
+	if(m_apPlayers[To])
+	{
+		dynamic_string Buffer;
+		
+		CNetMsg_Sv_Motd Msg;
+		
+		va_list VarArgs;
+		va_start(VarArgs, pText);
+		
+		Server()->Localization()->Format_VL(Buffer, m_apPlayers[To]->GetLanguage(), pText, VarArgs);
+	
+		va_end(VarArgs);
+		
+		Msg.m_pMessage = Buffer.buffer();
+		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, To);
+	}
+}
+
+void CGameContext::AddBroadcast(int ClientID, const char* pText, int Priority, int LifeSpan)
+{
+	if(LifeSpan > 0)
+	{
+		if(m_BroadcastStates[ClientID].m_TimedPriority > Priority)
+			return;
+			
+		str_copy(m_BroadcastStates[ClientID].m_TimedMessage, pText, sizeof(m_BroadcastStates[ClientID].m_TimedMessage));
+		m_BroadcastStates[ClientID].m_LifeSpanTick = LifeSpan;
+		m_BroadcastStates[ClientID].m_TimedPriority = Priority;
+	}
+	else
+	{
+		if(m_BroadcastStates[ClientID].m_Priority > Priority)
+			return;
+			
+		str_copy(m_BroadcastStates[ClientID].m_NextMessage, pText, sizeof(m_BroadcastStates[ClientID].m_NextMessage));
+		m_BroadcastStates[ClientID].m_Priority = Priority;
+	}
 }
 
 //
@@ -1749,7 +1811,7 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 					vec2 P2(fx2f(pQuads[q].m_aPoints[2].x), fx2f(pQuads[q].m_aPoints[2].y));
 					vec2 P3(fx2f(pQuads[q].m_aPoints[3].x), fx2f(pQuads[q].m_aPoints[3].y));
 					vec2 Pivot(fx2f(pQuads[q].m_aPoints[4].x), fx2f(pQuads[q].m_aPoints[4].y));
-					m_pController->OnEntity(aLayerName, Pivot, P0, P1, P2, P3, pQuads[q].m_PosEnv);
+					m_pController->OnEntity_P(aLayerName, Pivot, P0, P1, P2, P3, pQuads[q].m_PosEnv);
 				}
 			}
 		}
@@ -1764,7 +1826,7 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 	num_spawn_points[2] = 0;
 	*/
 
-	for(int y = 0; y < pTileMap->m_Height; y++)
+	/*for(int y = 0; y < pTileMap->m_Height; y++)
 	{
 		for(int x = 0; x < pTileMap->m_Width; x++)
 		{
@@ -1776,7 +1838,7 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 				m_pController->OnEntity(Index-ENTITY_OFFSET, Pos);
 			}
 		}
-	}
+	}*/
 
 	//game.world.insert_entity(game.Controller);
 

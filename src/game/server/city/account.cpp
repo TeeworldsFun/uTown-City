@@ -63,14 +63,14 @@ void CAccount::Login(char *Username, char *Password)
 	{
 		dbg_msg("account", "Account login failed ('%s' - Already logged in)", Username);
 		//GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Already logged in");
-		SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGROY_ACCOUNT, "Already logged in");
+		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, "Already logged in");
 		return;
 	}
 	else if(strlen(Username) > 15 || !strlen(Username))
 	{
 		str_format(aBuf, sizeof(aBuf), "Username too %s", strlen(Username)?"long":"short");
 		//GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
-		SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, aBuf);
+		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, aBuf);
 		return;
     }
 	else if(strlen(Password) > 15 || !strlen(Password))

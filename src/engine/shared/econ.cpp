@@ -11,7 +11,7 @@ int CEcon::NewClientCallback(int ClientID, void *pUser)
 
 	NETADDR Addr = pThis->m_NetConsole.ClientAddr(ClientID);
 	char aAddrStr[NETADDR_MAXSTRSIZE];
-	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 	char aBuf[128];
 	str_format(aBuf, sizeof(aBuf), "client accepted. cid=%d addr=%s'", ClientID, aAddrStr);
 	pThis->Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "econ", aBuf);
@@ -30,7 +30,7 @@ int CEcon::DelClientCallback(int ClientID, const char *pReason, void *pUser)
 
 	NETADDR Addr = pThis->m_NetConsole.ClientAddr(ClientID);
 	char aAddrStr[NETADDR_MAXSTRSIZE];
-	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 	char aBuf[256];
 	str_format(aBuf, sizeof(aBuf), "client dropped. cid=%d addr=%s reason='%s'", ClientID, aAddrStr, pReason);
 	pThis->Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "econ", aBuf);

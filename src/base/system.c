@@ -645,7 +645,7 @@ int net_addr_comp(const NETADDR *a, const NETADDR *b)
 	return mem_comp(a, b, sizeof(NETADDR));
 }
 
-void net_addr_str(const NETADDR *addr, char *string, int max_length, int add_port = 8303)
+void net_addr_str(const NETADDR *addr, char *string, int max_length, int add_port)
 {
 	if(addr->type == NETTYPE_IPV4)
 	{

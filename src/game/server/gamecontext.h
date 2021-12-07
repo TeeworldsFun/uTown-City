@@ -40,6 +40,17 @@
 			All players (CPlayer::snap)
 
 */
+
+enum
+{
+	BROADCAST_PRIORITY_LOWEST=0,
+	BROADCAST_PRIORITY_WEAPONSTATE,
+	BROADCAST_PRIORITY_EFFECTSTATE,
+	BROADCAST_PRIORITY_GAMEANNOUNCE,
+	BROADCAST_PRIORITY_SERVERANNOUNCE,
+	BROADCAST_PRIORITY_INTERFACE,
+};
+
 class CGameContext : public IGameServer
 {
 	IServer *m_pServer;
@@ -201,6 +212,31 @@ public:
 	int m_TeleNR[MAX_CLIENTS];
 	int m_TeleNum;
 	//int m_TeleID[MAX_CLIENTS];
+
+private:
+	int m_VoteLanguageTick[MAX_CLIENTS];
+	char m_VoteLanguage[MAX_CLIENTS][16];
+	int m_VoteBanClientID;
+	static bool m_ClientMuted[MAX_CLIENTS][MAX_CLIENTS]; // m_ClientMuted[i][j]: i muted j
+	
+	class CBroadcastState
+	{
+	public:
+		int m_NoChangeTick;
+		char m_PrevMessage[1024];
+		
+		int m_Priority;
+		char m_NextMessage[1024];
+		
+		int m_LifeSpanTick;
+		int m_TimedPriority;
+		char m_TimedMessage[1024];
+	};
+
+	static void ConList(IConsole::IResult *pResult, void *pUserData);
+
+	
+	CBroadcastState m_BroadcastStates[MAX_CLIENTS];
 
 public:
 	virtual void SendBroadcast_Localization(int To, int Priority, int LifeSpan, const char* pText, ...);

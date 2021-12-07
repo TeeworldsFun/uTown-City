@@ -7,6 +7,16 @@
 #include "kernel.h"
 #include "message.h"
 
+enum
+{
+	CHATCATEGORY_SYSTEM=0,
+	CHATCATEGORY_FNG,
+	CHATCATEGORY_JAIL,
+	CHATCATEGORY_ACCOUNT,
+	CHATCATEGORY_MAINCITY,
+	CHATCATEGORY_INSTA,
+};
+
 class IServer : public IInterface
 {
 	MACRO_INTERFACE("server", 0)
@@ -75,16 +85,8 @@ public:
 	// Dummy
 	virtual void DummyJoin(int DummyID, const char *pDummyName, const char *pDummyClan, int Country) = 0;
 	virtual void DummyLeave(int DummyID, const char *pDummyName = 0) = 0;
-};
 
-enum
-{
-	CHATCATEGORY_SYSTEM=0,
-	CHATCATEGORY_FNG,
-	CHATCATEGORY_JAIL,
-	CHATCATEGORY_ACCOUNT,
-	CHATCATEGORY_MAINCITY,
-	CHATCATEGORY_INSTA,
+	inline class CLocalization* Localization() { return m_pLocalization; }
 };
 
 class IGameServer : public IInterface

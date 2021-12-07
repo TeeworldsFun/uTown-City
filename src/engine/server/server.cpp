@@ -421,7 +421,7 @@ void CServer::GetClientAddr(int ClientID, char *pAddrStr, int Size)
 	{
 		NETADDR Addr = m_NetServer.ClientAddr(ClientID);
 		Addr.port = 0;
-		net_addr_str(&Addr, pAddrStr, Size);
+		net_addr_str(&Addr, pAddrStr, Size, true);
 	}
 }
 
@@ -672,7 +672,7 @@ int CServer::DelClientCallback(int ClientID, const char *pReason, void *pUser)
 
 	NETADDR Addr = pThis->m_NetServer.ClientAddr(ClientID);
 	char aAddrStr[NETADDR_MAXSTRSIZE];
-	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 	char aBuf[256];
 	str_format(aBuf, sizeof(aBuf), "client dropped. cid=%d addr=%s reason='%s'", ClientID, aAddrStr,	pReason);
 	pThis->Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
@@ -847,7 +847,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 			{
 				Addr = m_NetServer.ClientAddr(ClientID);
 				char aAddrStr[NETADDR_MAXSTRSIZE];
-				net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+				net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 
 				char aBuf[256];
 				str_format(aBuf, sizeof(aBuf), "player is ready. ClientID=%x addr=%s", ClientID, aAddrStr);
@@ -863,7 +863,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 			{
 				Addr = m_NetServer.ClientAddr(ClientID);
 				char aAddrStr[NETADDR_MAXSTRSIZE];
-				net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+				net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 
 				char aBuf[256];
 				str_format(aBuf, sizeof(aBuf), "player has entered the game. ClientID=%x addr=%s", ClientID, aAddrStr);
@@ -1153,7 +1153,7 @@ int CServer::BanAdd(NETADDR Addr, int Seconds, const char *pReason)
 {
 	Addr.port = 0;
 	char aAddrStr[128];
-	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 	char aBuf[256];
 	if(Seconds)
 		str_format(aBuf, sizeof(aBuf), "banned %s for %d minutes", aAddrStr, Seconds/60);
@@ -1541,7 +1541,7 @@ void CServer::ConUnban(IConsole::IResult *pResult, void *pUser)
 	if(net_addr_from_str(&Addr, pStr) == 0 && !pServer->BanRemove(Addr))
 	{
 		char aAddrStr[NETADDR_MAXSTRSIZE];
-		net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+		net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 
 		char aBuf[256];
 		str_format(aBuf, sizeof(aBuf), "unbanned %s", aAddrStr);
@@ -1556,7 +1556,7 @@ void CServer::ConUnban(IConsole::IResult *pResult, void *pUser)
 		else if(!pServer->BanRemove(Info.m_Addr))
 		{
 			char aAddrStr[NETADDR_MAXSTRSIZE];
-			net_addr_str(&Info.m_Addr, aAddrStr, sizeof(aAddrStr));
+			net_addr_str(&Info.m_Addr, aAddrStr, sizeof(aAddrStr), true);
 
 			char aBuf[256];
 			str_format(aBuf, sizeof(aBuf), "unbanned %s", aAddrStr);
@@ -1580,7 +1580,7 @@ void CServer::ConBans(IConsole::IResult *pResult, void *pUser)
 		CNetServer::CBanInfo Info;
 		pServer->m_NetServer.BanGet(i, &Info);
 		NETADDR Addr = Info.m_Addr;
-		net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+		net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 
 		if(Info.m_Expires == -1)
 		{
@@ -1610,7 +1610,7 @@ void CServer::ConStatus(IConsole::IResult *pResult, void *pUser)
 		if(pServer->m_aClients[i].m_State != CClient::STATE_EMPTY)
 		{
 			Addr = pServer->m_NetServer.ClientAddr(i);
-			net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+			net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 			// Dummy
 			if(pServer->m_aClients[i].m_State == CClient::STATE_INGAME || pServer->m_aClients[i].m_State == CClient::STATE_DUMMY)
 				str_format(aBuf, sizeof(aBuf), "id=%d addr=%s name='%s' score=%d", i, pServer->m_aClients[i].m_State == CClient::STATE_DUMMY?"Dummy":aAddrStr,
