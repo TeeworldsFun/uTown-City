@@ -15,6 +15,8 @@
 #include "gamemodes/tdm.h"
 #include "gamemodes/ctf.h"
 #include "gamemodes/mod.h"
+#include <iostream>
+#include <algorithm>
 
 enum
 {

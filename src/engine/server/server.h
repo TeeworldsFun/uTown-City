@@ -48,9 +48,6 @@ class CServer : public IServer
 	class IStorage *m_pStorage;
 
 public:
-	class CLocalization* m_pLocalization;
-
-public:
 	class IGameServer *GameServer() { return m_pGameServer; }
 	class IConsole *Console() { return m_pConsole; }
 	class IStorage *Storage() { return m_pStorage; }
@@ -63,7 +60,6 @@ public:
 
 		MAX_RCONCMD_SEND=16,
 	};
-	inline class CLocalization* Localization() { return m_pLocalization; }
 	class CClient
 	{
 	public:

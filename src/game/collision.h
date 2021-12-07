@@ -19,13 +19,13 @@ class CCollision
 	array< array<int> > m_Zones;
 
 	bool IsTileSolid(int x, int y);
+	int GetTile(int x, int y);
+	int GetZoneTile(int x, int y);
 	
 
 	// City
 	//int *m_pCityTiles;
 	//int *m_pEntities;
-
-	int GetTile(int x, int y);
 
 public:
 	enum

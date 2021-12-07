@@ -491,7 +491,7 @@ int net_addr_comp(const NETADDR *a, const NETADDR *b);
 	Remarks:
 		- The string will always be zero terminated
 */
-void net_addr_str(const NETADDR *addr, char *string, int max_length, int add_port);
+void net_addr_str(const NETADDR *addr, char *string, int max_length, int add_port = 8303);
 
 /*
 	Function: net_addr_from_str

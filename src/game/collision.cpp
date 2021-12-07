@@ -43,9 +43,9 @@ CCollision::~CCollision()
 void CCollision::Init(class CLayers *pLayers)
 {
 	m_pLayers = pLayers;
-	m_Width = m_pLayers->GameLayer()->m_Width;
-	m_Height = m_pLayers->GameLayer()->m_Height;
-	m_pTiles = static_cast<CTile *>(m_pLayers->Map()->GetData(m_pLayers->GameLayer()->m_Data));
+	m_Width = m_pLayers->PhysicsLayer()->m_Width;
+	m_Height = m_pLayers->PhysicsLayer()->m_Height;
+	m_pTiles = static_cast<CTile *>(m_pLayers->Map()->GetData(m_pLayers->PhysicsLayer()->m_Data));
 	m_pCityTiles = new CTile[m_Width*m_Height];
 	mem_copy(m_pCityTiles, m_pTiles, sizeof(CTile)*m_Width*m_Height);
 
@@ -273,6 +273,15 @@ void CCollision::MoveBox(vec2 *pInoutPos, vec2 *pInoutVel, vec2 Size, float Elas
 
 	*pInoutPos = Pos;
 	*pInoutVel = Vel;
+}
+
+inline bool SameSide(const vec2& l0, const vec2& l1, const vec2& p0, const vec2& p1)
+{
+	vec2 l0l1 = l1-l0;
+	vec2 l0p0 = p0-l0;
+	vec2 l0p1 = p1-l0;
+	
+	return sign(l0l1.x*l0p0.y - l0l1.y*l0p0.x) == sign(l0l1.x*l0p1.y - l0l1.y*l0p1.x);
 }
 
 //t0, t1 and t2 are position of triangle vertices

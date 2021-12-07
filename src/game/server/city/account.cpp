@@ -7,7 +7,7 @@
 #include "account.h"
 #include "game/server/gamecontroller.h"
 #include "game/server/gamecontext.h"
-//#include "minecity/components/localization.h"
+#include "minecity/components/localization.h"
 
 #if defined(CONF_FAMILY_WINDOWS)
 	#include <tchar.h>

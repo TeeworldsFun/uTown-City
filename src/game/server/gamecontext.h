@@ -71,7 +71,7 @@ class CGameContext : public IGameServer
 	bool m_Resetting;
 public:
 	IServer *Server() const { return m_pServer; }
-	IStorage *Storage() const { return m_pStorage; }
+	//IStorage *Storage() const { return Storage; }
 	class IConsole *Console() { return m_pConsole; }
 	CCollision *Collision() { return &m_Collision; }
 	CTuningParams *Tuning() { return &m_Tuning; }
@@ -97,7 +97,7 @@ public:
 	void SendVoteSet(int ClientID);
 	void SendVoteStatus(int ClientID, int Total, int Yes, int No);
 	void AbortVoteKickOnDisconnect(int ClientID);
-
+	
 	int m_VoteCreator;
 	int64 m_VoteCloseTime;
 	bool m_VoteUpdate;
