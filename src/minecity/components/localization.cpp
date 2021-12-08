@@ -3,8 +3,8 @@
 /* BEGIN EDIT *********************************************************/
 #include <engine/external/json-parser/json.h>
 #include <engine/storage.h>
-#include <unicode/ushape.h>
-#include <unicode/ubidi.h>
+#include <icu/include/unicode/ushape.h>
+#include <icu/include/unicode/ubidi.h>
 /* END EDIT ***********************************************************/
 
 /* LANGUAGE ***********************************************************/

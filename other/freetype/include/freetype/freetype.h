@@ -563,7 +563,7 @@ FT_BEGIN_HEADER
   /*    FT_ENCODING_WANSUNG ::                                             */
   /*      Corresponds to the Korean encoding system known as Wansung.      */
   /*      For more information see                                         */
-  /*      `http://www.microsoft.com/typography/unicode/949.txt'.           */
+  /*      `http://www.microsoft.com/typography/icu/include/unicode/949.txt'.           */
   /*                                                                       */
   /*    FT_ENCODING_JOHAB ::                                               */
   /*      The Korean standard character set (KS~C 5601-1992), which        */
