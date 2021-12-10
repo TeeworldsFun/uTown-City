@@ -425,6 +425,18 @@ void CServer::GetClientAddr(int ClientID, char *pAddrStr, int Size)
 	}
 }
 
+std::string CServer::GetClientIP(int ClientID)
+{
+	char aAddrStr[NETADDR_MAXSTRSIZE];
+	//net_addr_str(m_NetServer.ClientAddr(ClientID), aAddrStr, sizeof(aAddrStr), false);
+	std::string ip(aAddrStr);
+	return ip;
+}
+
+void CServer::SetClientLanguage(int ClientID, const char* pLanguage)
+{
+	str_copy(m_aClients[ClientID].m_aLanguage, pLanguage, sizeof(m_aClients[ClientID].m_aLanguage));
+}
 
 const char *CServer::ClientName(int ClientID)
 {

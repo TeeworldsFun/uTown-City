@@ -47,6 +47,7 @@ public:
 		// F2RconCmdsbyKlickFoot <3
 
 		virtual int GetVictim() = 0;
+		int GetClientID() { return m_ClientID; }
 	};
 
 	class CCommandInfo

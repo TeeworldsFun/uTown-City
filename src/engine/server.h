@@ -6,6 +6,7 @@
 #define ENGINE_SERVER_H
 #include "kernel.h"
 #include "message.h"
+#include <string>
 
 enum
 {
@@ -85,6 +86,10 @@ public:
 	// Dummy
 	virtual void DummyJoin(int DummyID, const char *pDummyName, const char *pDummyClan, int Country) = 0;
 	virtual void DummyLeave(int DummyID, const char *pDummyName = 0) = 0;
+
+	virtual std::string GetClientIP(int ClientID) = 0;
+	virtual void SetClientLanguage(int ClientID, const char* pLanguage);
+	
 
 	inline class CLocalization* Localization() { return m_pLocalization; }
 };

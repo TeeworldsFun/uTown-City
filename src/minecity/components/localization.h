@@ -6,10 +6,10 @@
 #define CStorage IStorage
 /* END EDIT ***********************************************************/
 
-#include <icu/include/unicode/ucnv.h>
-#include <icu/include/unicode/numfmt.h>
-#include <icu/include/unicode/upluralrules.h>
-#include <icu/include/unicode/tmutfmt.h>
+#include <unicode/ucnv.h>
+#include <unicode/numfmt.h>
+#include <unicode/upluralrules.h>
+#include <unicode/tmutfmt.h>
 
 #include <stdarg.h>
 

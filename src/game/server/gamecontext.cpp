@@ -43,6 +43,7 @@ void CGameContext::Construct(int Resetting)
 		m_pVoteOptionHeap = new CHeap();
 		
 	m_TeleNum = 0;
+	//geolocation = new Geolocation("GeoLite2-Country.mmdb");
 	
 }
 
@@ -62,6 +63,9 @@ CGameContext::~CGameContext()
 		delete m_apPlayers[i];
 	if(!m_Resetting)
 		delete m_pVoteOptionHeap;
+
+	//delete geolocation;
+	//geolocation = nullptr;
 }
 
 void CGameContext::Clear()
@@ -1224,6 +1228,9 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		CNetMsg_Cl_StartInfo *pMsg = (CNetMsg_Cl_StartInfo *)pRawMsg;
 		pPlayer->m_LastChangeInfo = Server()->Tick();
 
+		/*std::string ip = Server()->GetClientIP(ClientID);
+		Server()->SetClientCountry(ClientID, geolocation->get_country_iso_numeric_code(ip));
+*/
 		// set start infos
 		Server()->SetClientName(ClientID, pMsg->m_pName);
 		Server()->SetClientClan(ClientID, pMsg->m_pClan);
@@ -1421,6 +1428,11 @@ void CGameContext::ConBroadcast(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->SendBroadcast(pResult->GetString(0), -1);
+}
+
+void CGameContext::ClearBroadcast(int To, int Priority)
+{
+	// NOthing
 }
 
 void CGameContext::ConSay(IConsole::IResult *pResult, void *pUserData)
@@ -1694,6 +1706,60 @@ void CGameContext::ConClearVotes(IConsole::IResult *pResult, void *pUserData)
 	pSelf->m_pVoteOptionFirst = 0;
 	pSelf->m_pVoteOptionLast = 0;
 	pSelf->m_NumVoteOptions = 0;
+}
+
+bool CGameContext::ConLanguage(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	
+	int ClientID = pResult->GetClientID();
+	
+	const char *pLanguageCode = (pResult->NumArguments()>0) ? pResult->GetString(0) : 0x0;
+	char aFinalLanguageCode[8];
+	aFinalLanguageCode[0] = 0;
+
+	if(pLanguageCode)
+	{
+		if(str_comp_nocase(pLanguageCode, "ua") == 0)
+			str_copy(aFinalLanguageCode, "uk", sizeof(aFinalLanguageCode));
+		else
+		{
+			for(int i=0; i<pSelf->Server()->Localization()->m_pLanguages.size(); i++)
+			{
+				if(str_comp_nocase(pLanguageCode, pSelf->Server()->Localization()->m_pLanguages[i]->GetFilename()) == 0)
+					str_copy(aFinalLanguageCode, pLanguageCode, sizeof(aFinalLanguageCode));
+			}
+		}
+	}
+	
+	if(aFinalLanguageCode[0])
+	{
+		pSelf->Server()->SetClientLanguage(ClientID, aFinalLanguageCode);
+		if(pSelf->m_apPlayers[ClientID])
+			pSelf->m_apPlayers[ClientID]->SetLanguage(aFinalLanguageCode);
+	}
+	else
+	{
+		const char* pLanguage = pSelf->m_apPlayers[ClientID]->GetLanguage();
+		const char* pTxtUnknownLanguage = pSelf->Server()->Localization()->Localize(pLanguage, _("Unknown language"));
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "language", pTxtUnknownLanguage);	
+		
+		dynamic_string BufferList;
+		int BufferIter = 0;
+		for(int i=0; i<pSelf->Server()->Localization()->m_pLanguages.size(); i++)
+		{
+			if(i>0)
+				BufferIter = BufferList.append_at(BufferIter, ", ");
+			BufferIter = BufferList.append_at(BufferIter, pSelf->Server()->Localization()->m_pLanguages[i]->GetFilename());
+		}
+		
+		dynamic_string Buffer;
+		pSelf->Server()->Localization()->Format_L(Buffer, pLanguage, _("Available languages: {str:ListOfLanguage}"), "ListOfLanguage", BufferList.buffer(), NULL);
+		
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "language", Buffer.buffer());
+	}
+	
+	return true;
 }
 
 void CGameContext::ConVote(IConsole::IResult *pResult, void *pUserData)

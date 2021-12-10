@@ -6,6 +6,7 @@
 #define ENGINE_SERVER_SERVER_H
 
 #include <engine/server.h>
+#include <string>
 
 class CSnapIDPool
 {
@@ -164,6 +165,7 @@ public:
 	//int TickSpeed()
 
 	int Init();
+	std::string GetClientIP(int ClientID);
 
 	int AuthLvl(int ClientID);
 	bool IsAuthed(int ClientID);

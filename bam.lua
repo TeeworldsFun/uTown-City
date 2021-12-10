@@ -153,8 +153,18 @@ function build(settings)
 		if platform == "macosx" then
 			settings.link.frameworks:Add("Carbon")
 			settings.link.frameworks:Add("AppKit")
+			settings.cc.includes:Add("/usr/local/opt/icu4c/include")
+			settings.link.libs:Add("icui18n")
+			settings.link.libs:Add("icuuc")
+			settings.link.libs:Add("c++")
+			settings.link.libpath:Add("/usr/local/opt/icu4c/lib")
 		else
 			settings.link.libs:Add("pthread")
+			if ExecuteSilent("pkg-config icu-uc icu-i18n") == 0 then
+			end
+
+			settings.cc.flags:Add("`pkg-config --cflags icu-uc icu-i18n`")
+			settings.link.flags:Add("`pkg-config --libs icu-uc icu-i18n`")
 		end
 	elseif family == "windows" then
 		settings.link.libs:Add("gdi32")
@@ -222,6 +232,7 @@ function build(settings)
 	game_server = Compile(settings, CollectRecursive("src/game/server/*.cpp"), server_content_source)
 	game_editor = Compile(settings, Collect("src/game/editor/*.cpp"))
 	minecity = Compile(server_settings, Collect("src/minecity/*.cpp", "src/minecity/components/*.cpp", "src/minecity/system/*.cpp"))
+	--  infclassr = Compile(settings, Collect("src/infclassr/*.cpp", "src/infclassr/GeoLite2PP/*.cpp"))
 
 	-- build tools (TODO: fix this so we don't get double _d_d stuff)
 	tools_src = Collect("src/tools/*.cpp", "src/tools/*.c")
@@ -242,7 +253,7 @@ function build(settings)
 	-- build client, server, version server and master server
 	client_exe = Link(client_settings, "teeworlds", game_shared, game_client,
 		engine, client, game_editor, zlib, pnglite, wavpack,
-		client_link_other, client_osxlaunch, json)
+		client_link_other, client_osxlaunch, json, infclassr, minecity)
 
 	server_exe = Link(server_settings, "uTown_srv", engine, server,
 		game_shared, game_server, minecity, zlib, server_link_other,

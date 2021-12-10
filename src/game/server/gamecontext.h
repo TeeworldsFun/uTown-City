@@ -18,6 +18,7 @@
 #include "player.h"
 
 #include <minecity/components/localization.h>
+//#include <infclassr/geolocation.h>
 
 /*
 	Tick
@@ -60,6 +61,8 @@ class CGameContext : public IGameServer
 	CNetObjHandler m_NetObjHandler;
 	CTuningParams m_Tuning;
 
+	//Geolocation* geolocation;
+	
 	static void ConTuneParam(IConsole::IResult *pResult, void *pUserData);
 	static void ConTuneReset(IConsole::IResult *pResult, void *pUserData);
 	static void ConTuneDump(IConsole::IResult *pResult, void *pUserData);
