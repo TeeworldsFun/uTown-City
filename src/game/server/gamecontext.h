@@ -240,7 +240,7 @@ private:
 
 	
 	CBroadcastState m_BroadcastStates[MAX_CLIENTS];
-
+// Localization Auto translate
 public:
 	virtual void SendBroadcast_Localization(int To, int Priority, int LifeSpan, const char* pText, ...);
 	virtual void SendBroadcast_Localization_P(int To, int Priority, int LifeSpan, int Number, const char* pText, ...);
@@ -251,11 +251,11 @@ public:
 	void AddBroadcast(int ClientID, const char* pText, int Priority, int LifeSpan);
 	virtual void SendChatTarget_Localization_P(int To, int Category, int Number, const char* pText, ...);
 	
+	static bool ConLanguage(IConsole::IResult *pResult, void *pUserData);
 	virtual void SendMOTD(int To, const char* pParam);
 	virtual void SendMOTD_Localization(int To, const char* pText, ...);
 };
-//出bug了 我正在修复 那个小白鼠有什么问题 不在Accounts文件夹,而且格式也不是*.acc是:newhand 而且还有一个叫1的账号,也不是acc文件 没有任何后缀
-//我去看眼马上回来
+
 inline int CmaskAll() { return -1; }
 inline int CmaskOne(int ClientID) { return 1<<ClientID; }
 inline int CmaskAllExceptOne(int ClientID) { return 0x7fffffff^CmaskOne(ClientID); }

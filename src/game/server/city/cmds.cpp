@@ -416,17 +416,14 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 
 		return;
 	}
-	else if(!str_comp_nocase(Msg->m_pMessage, "/lang") || !str_comp_nocase(Msg->m_pMessage, "/language") || !str_comp_nocase(Msg->m_pMessage, "/yuyan"))
+	else if(!str_comp_nocase(Msg->m_pMessage, "/lang"))
 	{
 		LastChat();
-		m_pPlayer->SetLanguage(cn-sim)
-
-		return;
-	}
-	else if(!str_comp_nocase(Msg->m_pMessage, "/lang") || !str_comp_nocase(Msg->m_pMessage, "/language") || !str_comp_nocase(Msg->m_pMessage, "/yuyan"))
-	{
-		LastChat();
-		m_pPlayer->SetLanguage(en)
+		if(sscanf(Msg->m_pMessage, "/lang cn-sim"))
+		{
+			GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_SYSTEM, "")
+			return;
+		}
 
 		return;
 	}

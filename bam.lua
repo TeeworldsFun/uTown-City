@@ -233,6 +233,7 @@ function build(settings)
 	game_editor = Compile(settings, Collect("src/game/editor/*.cpp"))
 	minecity = Compile(server_settings, Collect("src/minecity/*.cpp", "src/minecity/components/*.cpp", "src/minecity/system/*.cpp"))
 	--  infclassr = Compile(settings, Collect("src/infclassr/*.cpp", "src/infclassr/GeoLite2PP/*.cpp"))
+	-- unuse infclassr(no use)
 
 	-- build tools (TODO: fix this so we don't get double _d_d stuff)
 	tools_src = Collect("src/tools/*.cpp", "src/tools/*.c")

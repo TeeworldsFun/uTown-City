@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <fstream>
+#include <iostream>
 #include <engine/config.h>
 #include "account.h"
 #include "game/server/gamecontroller.h"
@@ -138,6 +139,7 @@ void CAccount::Login(char *Username, char *Password)
 		return;
 	}
 	PlayerLevelUp();
+	
 
 
 	Accfile = fopen(aBuf, "r"); 		
