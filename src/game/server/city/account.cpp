@@ -3,12 +3,11 @@
 
 #include <string.h>
 #include <fstream>
-#include <iostream>
 #include <engine/config.h>
 #include "account.h"
 #include "game/server/gamecontroller.h"
 #include "game/server/gamecontext.h"
-#include "minecity/components/localization.h"
+//#include "minecity/components/localization.h"
 
 #if defined(CONF_FAMILY_WINDOWS)
 	#include <tchar.h>
@@ -64,14 +63,14 @@ void CAccount::Login(char *Username, char *Password)
 	{
 		dbg_msg("account", "Account login failed ('%s' - Already logged in)", Username);
 		//GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Already logged in");
-		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, "Already logged in");
+		SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGROY_ACCOUNT, "Already logged in");
 		return;
 	}
 	else if(strlen(Username) > 15 || !strlen(Username))
 	{
 		str_format(aBuf, sizeof(aBuf), "Username too %s", strlen(Username)?"long":"short");
 		//GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
-		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, aBuf);
+		SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, aBuf);
 		return;
     }
 	else if(strlen(Password) > 15 || !strlen(Password))
@@ -83,8 +82,8 @@ void CAccount::Login(char *Username, char *Password)
 	else if(!Exists(Username))
 	{
 		dbg_msg("account", "Account login failed ('%s' - Missing)", Username);
-		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, "This account does not exist.");
-		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, "Please register first. (/register <user> <pass>)");
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "This account does not exist.");
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Please register first. (/register <user> <pass>)");
 		return;// FNG没写完 你去mapitem.h的TILE_*结尾，加一个TILE_FNG_CHECK,
 	}// ok
 	// 或者你在languages-dump.json里写所有的对话信息，我去写点作业
@@ -139,12 +138,11 @@ void CAccount::Login(char *Username, char *Password)
 		return;
 	}
 	PlayerLevelUp();
-	
 
 
 	Accfile = fopen(aBuf, "r"); 		
 
-	fscanf(Accfile, "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n\n%d", 
+	fscanf(Accfile, "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d", 
 		m_pPlayer->m_AccData.m_Username, // Done
 		m_pPlayer->m_AccData.m_Password, // Done
 		m_pPlayer->m_AccData.m_RconPassword, 
@@ -191,9 +189,7 @@ void CAccount::Login(char *Username, char *Password)
 		&m_pPlayer->m_AccData.m_NinjaStart, // Done
 		&m_pPlayer->m_AccData.m_NinjaSwitch, // Done
 
-		&m_pPlayer->m_AccData.m_ExpPoints, //Done
-		
-		&m_pPlayer->m_AccData.m_IsCityMaster);
+		&m_pPlayer->m_AccData.m_ExpPoints); //Done
 
 	fclose(Accfile);
 
@@ -279,7 +275,7 @@ void CAccount::Register(char *Username, char *Password)
 	FILE *Accfile;
 	Accfile = fopen(aBuf, "a+");
 
-	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n\n%d", 
+	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d", 
 		Username, 
 		Password, 
 		"0",
@@ -326,9 +322,7 @@ void CAccount::Register(char *Username, char *Password)
 		m_pPlayer->m_AccData.m_NinjaStart, 
 		m_pPlayer->m_AccData.m_NinjaSwitch,
 
-		GetPlayerExp(),
-		
-		m_pPlayer->m_AccData.m_IsCityMaster);
+		GetPlayerExp());
 
 	fputs(aBuf, Accfile);
 	fclose(Accfile);
@@ -358,7 +352,7 @@ void CAccount::Apply()
 	FILE *Accfile;
 	Accfile = fopen(aBuf,"a+");
 	
-	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n\n%d", 
+	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d", 
 		m_pPlayer->m_AccData.m_Username,
 		m_pPlayer->m_AccData.m_Password, 
 		m_pPlayer->m_AccData.m_RconPassword, 
@@ -405,9 +399,7 @@ void CAccount::Apply()
 		m_pPlayer->m_AccData.m_NinjaStart, 
 		m_pPlayer->m_AccData.m_NinjaSwitch,
 
-		GetPlayerExp(),
-		
-		m_pPlayer->m_AccData.m_IsCityMaster);
+		GetPlayerExp());
 
 	fputs(aBuf, Accfile);
 	fclose(Accfile);
@@ -463,7 +455,6 @@ void CAccount::Reset()
 
 	m_pPlayer->m_AccData.m_ExpPoints = 0;
 
-	m_pPlayer->m_AccData.m_IsCityMaster = 0;
 }
 
 void CAccount::Delete()
@@ -475,10 +466,10 @@ void CAccount::Delete()
 		str_format(aBuf, sizeof(aBuf), "accounts/%s.acc", m_pPlayer->m_AccData.m_Username);
 		std::remove(aBuf);
 		dbg_msg("account", "Account deleted ('%s')", m_pPlayer->m_AccData.m_Username);
-		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, "Account deleted!");
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Account deleted!");
 	}
 	else
-		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, "Please, login to delete your account");
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Please, login to delete your account");
 }
 
 void CAccount::NewPassword(char *NewPassword)
@@ -491,8 +482,8 @@ void CAccount::NewPassword(char *NewPassword)
 	}
 	if(strlen(NewPassword) > 15 || !strlen(NewPassword))
 	{
-		// str_format(aBuf, sizeof(aBuf), "Password too %s!", strlen(NewPassword)?"long":"short");
-		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, "Password too {str:LongNShort}!", "LongNShort", strlen(NewPassword)?"long":"short");
+		str_format(aBuf, sizeof(aBuf), "Password too %s!", strlen(NewPassword)?"long":"short");
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
 		return;
     }
 
@@ -501,7 +492,7 @@ void CAccount::NewPassword(char *NewPassword)
 
 	
 	dbg_msg("account", "Password changed - ('%s')", m_pPlayer->m_AccData.m_Username);
-	GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, "Password successfully changed!");
+	GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Password successfully changed!");
 }
 
 void CAccount::NewUsername(char *NewUsername)
@@ -509,13 +500,13 @@ void CAccount::NewUsername(char *NewUsername)
 	char aBuf[128];
 	if(!m_pPlayer->m_AccData.m_UserID)
 	{
-		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, "Please, login to change the username");
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Please, login to change the username");
 		return;
 	}
 	if(strlen(NewUsername) > 15 || !strlen(NewUsername))
 	{
-		// str_format(aBuf, sizeof(aBuf), "Username too %s!", strlen(NewUsername)?"long":"short");
-		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, "Username too {str:LoS}", "LoS", strlen(NewUsername)?"long":"short");
+		str_format(aBuf, sizeof(aBuf), "Username too %s!", strlen(NewUsername)?"long":"short");
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
 		return;
     }
 
@@ -527,7 +518,7 @@ void CAccount::NewUsername(char *NewUsername)
 
 	
 	dbg_msg("account", "Username changed - ('%s')", m_pPlayer->m_AccData.m_Username);
-	GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_ACCOUNT, "Username successfully changed!");
+	GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Username successfully changed!");
 }
 
 int CAccount::NextID()

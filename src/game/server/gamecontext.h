@@ -18,7 +18,6 @@
 #include "player.h"
 
 #include <minecity/components/localization.h>
-//#include <infclassr/geolocation.h>
 
 /*
 	Tick
@@ -41,17 +40,6 @@
 			All players (CPlayer::snap)
 
 */
-
-enum
-{
-	BROADCAST_PRIORITY_LOWEST=0,
-	BROADCAST_PRIORITY_WEAPONSTATE,
-	BROADCAST_PRIORITY_EFFECTSTATE,
-	BROADCAST_PRIORITY_GAMEANNOUNCE,
-	BROADCAST_PRIORITY_SERVERANNOUNCE,
-	BROADCAST_PRIORITY_INTERFACE,
-};
-
 class CGameContext : public IGameServer
 {
 	IServer *m_pServer;
@@ -61,8 +49,6 @@ class CGameContext : public IGameServer
 	CNetObjHandler m_NetObjHandler;
 	CTuningParams m_Tuning;
 
-	//Geolocation* geolocation;
-	
 	static void ConTuneParam(IConsole::IResult *pResult, void *pUserData);
 	static void ConTuneReset(IConsole::IResult *pResult, void *pUserData);
 	static void ConTuneDump(IConsole::IResult *pResult, void *pUserData);
@@ -85,7 +71,6 @@ class CGameContext : public IGameServer
 	bool m_Resetting;
 public:
 	IServer *Server() const { return m_pServer; }
-	//IStorage *Storage() const { return Storage; }
 	class IConsole *Console() { return m_pConsole; }
 	CCollision *Collision() { return &m_Collision; }
 	CTuningParams *Tuning() { return &m_Tuning; }
@@ -110,7 +95,7 @@ public:
 	void SendVoteSet(int ClientID);
 	void SendVoteStatus(int ClientID, int Total, int Yes, int No);
 	void AbortVoteKickOnDisconnect(int ClientID);
-	
+
 	int m_VoteCreator;
 	int64 m_VoteCloseTime;
 	bool m_VoteUpdate;
@@ -215,31 +200,6 @@ public:
 	int m_TeleNum;
 	//int m_TeleID[MAX_CLIENTS];
 
-private:
-	int m_VoteLanguageTick[MAX_CLIENTS];
-	char m_VoteLanguage[MAX_CLIENTS][16];
-	int m_VoteBanClientID;
-	static bool m_ClientMuted[MAX_CLIENTS][MAX_CLIENTS]; // m_ClientMuted[i][j]: i muted j
-	
-	class CBroadcastState
-	{
-	public:
-		int m_NoChangeTick;
-		char m_PrevMessage[1024];
-		
-		int m_Priority;
-		char m_NextMessage[1024];
-		
-		int m_LifeSpanTick;
-		int m_TimedPriority;
-		char m_TimedMessage[1024];
-	};
-
-	static void ConList(IConsole::IResult *pResult, void *pUserData);
-
-	
-	CBroadcastState m_BroadcastStates[MAX_CLIENTS];
-// Localization Auto translate
 public:
 	virtual void SendBroadcast_Localization(int To, int Priority, int LifeSpan, const char* pText, ...);
 	virtual void SendBroadcast_Localization_P(int To, int Priority, int LifeSpan, int Number, const char* pText, ...);
@@ -247,14 +207,13 @@ public:
 	virtual void ClearBroadcast(int To, int Priority);
 	
 	virtual void SendChatTarget_Localization(int To, int Category, const char* pText, ...);
-	void AddBroadcast(int ClientID, const char* pText, int Priority, int LifeSpan);
 	virtual void SendChatTarget_Localization_P(int To, int Category, int Number, const char* pText, ...);
 	
-	static bool ConLanguage(IConsole::IResult *pResult, void *pUserData);
 	virtual void SendMOTD(int To, const char* pParam);
 	virtual void SendMOTD_Localization(int To, const char* pText, ...);
 };
-
+//出bug了 我正在修复 那个小白鼠有什么问题 不在Accounts文件夹,而且格式也不是*.acc是:newhand 而且还有一个叫1的账号,也不是acc文件 没有任何后缀
+//我去看眼马上回来
 inline int CmaskAll() { return -1; }
 inline int CmaskOne(int ClientID) { return 1<<ClientID; }
 inline int CmaskAllExceptOne(int ClientID) { return 0x7fffffff^CmaskOne(ClientID); }

@@ -39,9 +39,6 @@ public:
 	void KillCharacter(int Weapon = WEAPON_GAME);
 	CCharacter *GetCharacter();
 
-	const char* GetLanguage();
-	void SetLanguage(const char* pLanguage);
-
 
 	// Dummy
 	bool m_IsDummy;
@@ -124,7 +121,6 @@ public:
 
 		// Rank
 		int m_Donor;
-		int m_IsCityMaster;
 		int m_VIP;
 		int m_Arrested;
 
@@ -191,7 +187,6 @@ private:
 	bool m_Spawning;
 	int m_ClientID;
 	int m_Team;
-	char m_aLanguage[16];
 };
 
 #endif

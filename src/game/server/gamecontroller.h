@@ -110,14 +110,6 @@ public:
 		Arguments:
 			chr - The CCharacter that was spawned.
 	*/
-	//virtual bool OnEntity_P(const char* pName, vec2 Pivot, vec2 P0, vec2 P1, vec2 P2, vec2 P3, int PosEnv);
-
-	/*
-		Function: on_CCharacter_spawn
-			Called when a CCharacter spawns into the game world.
-		Arguments:
-			chr - The CCharacter that was spawned.
-	*/
 	virtual void OnCharacterSpawn(class CCharacter *pChr);
 
 	/*
@@ -149,7 +141,6 @@ public:
 	int ClampTeam(int Team);
 
 	virtual void PostReset();
-	double GetTime();
 };
 
 #endif

@@ -1,0 +1,307 @@
+{"translation":[
+    {
+        "key": "Already logged in",
+        "value": ""
+    },
+    {
+        "key": "Username too long",
+        "value": ""
+    },
+    {
+        "key": "Username too short",
+        "value": ""
+    },
+    {
+        "key": "aBuf",
+        "value": "Error message"
+    },
+    {
+        "key": "This account does not exist.",
+        "value": ""
+    },
+    {
+        "key": "Please register first. (/register <user> <pass>)",
+        "value": ""
+    },
+    {
+        "key": "Account already in use",
+        "value": ""
+    },
+    { 
+        "key": "Wrong username or password",
+        "value": ""
+    },
+    {
+        "key": "Account login failed ('%s' - Already logged in)",
+        "value": ""
+    },
+    {
+        "key": "Password too long",
+        "value": ""
+    },
+    {
+        "key": "Password too short",
+        "value": ""
+    },
+    {
+        "key": "Please, use '/login <username> <password>",
+        "value": ""
+    },
+    {
+        "key": "Not logged in",
+        "value": ""
+    },
+    {
+        "key": "Logout succesful",
+        "value": ""
+    },
+    {
+        "key": "Access denied",
+        "value": ""
+    },
+    {
+        "key": "Only for Police",
+        "value": ""
+    },
+    {
+        "key": "JailRifle enabled",
+        "value": ""
+    },
+    {
+        "key": "Invisibility for player with score less than 20",
+        "value": ""
+    },
+    {
+        "key": "JailRifle disabled",
+        "value": ""
+    },
+    {
+        "key": "Cmd is not allowed while playing instagib",
+        "value": ""
+    },
+    {
+        "key": "Cmd is not allowed while playing fng",
+        "value": ""
+    },
+    {
+        "key": "Invisibility enabled I",
+        "value": ""
+    },
+    {
+        "key": "Invisibility enabled II",
+        "value": ""
+    },
+    {
+        "key": "Invisibility disabled",
+        "value": ""
+    },
+    {
+        "key": "Please use '/password <password>'",
+        "value": ""
+    },
+    {
+        "key": "Please, use /rename <newname>",
+        "value": ""
+    },
+    {
+        "key": "uTown_v2.0 by Pikotee & KlickFoot",
+        "value": ""
+    },
+    {
+        "key": "Don't trust Blunk(Torben Weiss) and QuickTee/r00t they're stealing mods...",
+        "value": ""
+    },
+    {
+        "key": "Instagib is not enabled on this server",
+        "value": ""
+    },
+    {
+        "key": "Fng is not enabled on this server",
+        "value": ""
+    },
+    {
+        "key": "You are not permitted to join instagib.",
+        "value": ""
+    },
+    {
+        "key": "You are not permitted to join fng.",
+        "value": ""
+    },
+    {
+        "key": "Please, use '/transfer <money>'",
+        "value": ""
+    },
+    {
+        "key": "{PlayerName} joined Instagib",
+        "value": ""
+    },
+    {
+        "key": "{PlayerName} left Instagib",
+        "value": ""
+    },
+    {
+        "key": "Noob CMD disabled, even for Admins",
+        "value": ""
+    },
+    {
+        "key": "Test CMD acces denied",
+        "value": ""
+    },
+    {
+        "key": "Wrong CMD, see /cmdlist",
+        "value": ""
+    },
+    {
+        "key": "Please, use '/transfer <money>'",
+        "value": ""
+    },
+    {
+        "key": "Don't use invalid chars for username!",
+        "value": ""
+    },
+    {
+        "key": "Player level up! || Now you Level:{PlayerLevel}",
+        "value": ""
+    },
+    {
+        "key": "            =CMD-LIST=\n\n\n/info - Some information\n\n/invi - Invisibility (Level < 20)\n\n/rainbow - Rainbow colors\n\n/help - Accounthelp\n\n/me - Accountstats\n\n/transfer <money>\n\n/donor, /police - What is it?",
+        "value": ""
+    },
+    {
+        "key": "+500 TC || current {PlayerNumTC} TC",
+        "value": ""
+    },
+    {
+        "key": "+1 Exp || current:{PlayerEXP}",
+        "value": ""
+    },
+    {
+        "key": "Level: {PlayerLevel} || Exp: {PlayerEXP}",
+        "value": ""
+    },
+    {
+        "key": "+2 Exp || Current: {PlayerEXP} Exp || {InstaKills} Insta-Kills",
+        "value": ""
+    },
+    {
+        "key": "+{PlayerNumTC} TC || Current: {PlayerNumTC} TC",
+        "value": ""
+    },
+    {
+        "key": "Level: {PlayerLevel} || Exp: {PlayerEXP}",
+        "value": ""
+    },
+    {
+        "key": "{Killer} killed {Victim} with {InstaKills} kills",
+        "value": ""
+    },
+    {
+        "key": "{PlayerName} is on a killing spree with 5 kills",
+        "value": ""
+    },
+    {
+        "key": "{PlayerName} is unstoppable with 10 kills",
+        "value": ""
+    },
+    {
+        "key": "{PlayerName} is dominating with {InstaKills} kills",
+        "value": ""
+    },
+    {
+        "key": "{PlayerName} is Godlike! (50 kills)",
+        "value": ""
+    },
+    {
+        "key": "Player level up! || Now you Level:{PlayerLevel}",
+        "value": ""
+    },
+    {
+        "key": "%s killed %s with %i kills",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "Registration succesful - ('/login %s %s'):",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    },
+    {
+        "key": "",
+        "value": ""
+    }
+]
+}

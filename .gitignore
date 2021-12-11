@@ -4,6 +4,3 @@
 /accounts/*.acc
 /teeworlds_srv
 /src/game/generated
-
-.bam/00000000
-config.lua
