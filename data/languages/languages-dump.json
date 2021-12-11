@@ -4,11 +4,7 @@
         "value": ""
     },
     {
-        "key": "Username too long",
-        "value": ""
-    },
-    {
-        "key": "Username too short",
+        "key": "Username too {str:LoS}",
         "value": ""
     },
     {
@@ -36,11 +32,7 @@
         "value": ""
     },
     {
-        "key": "Password too long",
-        "value": ""
-    },
-    {
-        "key": "Password too short",
+        "key": "Password too {str:LoS}",
         "value": ""
     },
     {

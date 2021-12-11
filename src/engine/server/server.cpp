@@ -433,11 +433,6 @@ std::string CServer::GetClientIP(int ClientID)
 	return ip;
 }
 
-void CServer::SetClientLanguage(int ClientID, const char* pLanguage)
-{
-	str_copy(m_aClients[ClientID].m_aLanguage, pLanguage, sizeof(m_aClients[ClientID].m_aLanguage));
-}
-
 const char *CServer::ClientName(int ClientID)
 {
 	if(ClientID < 0 || ClientID >= MAX_CLIENTS || m_aClients[ClientID].m_State == CServer::CClient::STATE_EMPTY)

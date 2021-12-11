@@ -131,6 +131,7 @@ public:
 	int m_MapReload;
 	int m_RconClientID;
 	char m_aLanguage[16];
+	virtual void SetClientLanguage(int ClientID, const char* pLanguage);
 	int m_RconAuthLevel;
 	int m_PrintCBIndex;
 
@@ -243,7 +244,6 @@ public:
 	void SnapSetStaticsize(int ItemType, int Size);
 
 	virtual const char* GetClientLanguage(int ClientID);
-	virtual void SetClientLanguage(int ClientID, const char* pLanguage);
 };
 
 #endif

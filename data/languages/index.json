@@ -6,13 +6,13 @@
     },
     {
         "file": "cn-sim",
-        "name": "chinese",
+        "name": "cn",
         "parent": "en"
     },
     {
         "file": "cn-tra",
         "name": "chinese-tra",
-        "parent": "en"
+        "parent": "cn-sim"
     }
 ]
 }

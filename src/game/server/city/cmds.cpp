@@ -421,7 +421,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		LastChat();
 		if(sscanf(Msg->m_pMessage, "/lang cn-sim"))
 		{
-			GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_SYSTEM, "")
+			GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_SYSTEM, "");
 			return;
 		}
 

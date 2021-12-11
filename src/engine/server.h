@@ -21,9 +21,11 @@ enum
 class IServer : public IInterface
 {
 	MACRO_INTERFACE("server", 0)
+
 protected:
 	int m_CurrentGameTick;
 	int m_TickSpeed;
+
 public:
 	class CLocalization* m_pLocalization;
 

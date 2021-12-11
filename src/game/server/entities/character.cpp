@@ -200,7 +200,7 @@ void CCharacter::SaveLoad(int Value)
 	}
 	else if(m_SavePos == vec2(0,0))
 	{
-		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "[Load]: Set a position first"); 
+		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_SYSTEM, "[Load]: Set a position first"); 
 		return;
 	}
 	
@@ -230,22 +230,41 @@ void CCharacter::Buy(const char *Name, int *Upgrade, int Price, int Click, int M
 
 					m_BuyTick = Server()->Tick();
 					GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
-					str_format(aBuf, sizeof(aBuf), "Money: %d TC", m_pPlayer->m_AccData.m_Money);
-					GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
+					GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_MAINCITY, 
+					"{str:Name} ({int:Upgrade}/{int:Max})", 
+					
+					"Name", Name, 
+					"Upgrade", *Upgrade, 
+					"Max", Max);
+					//str_format(aBuf, sizeof(aBuf), "Money: %d TC", m_pPlayer->m_AccData.m_Money);
+					GameServer()->SendBroadcast_Localization(m_pPlayer->GetCID(), 5, 5, 
+					"Money: {int:TC} TC", 
+					
+					"TC", m_pPlayer->m_AccData.m_Money);
 				}
 			}
 			else
 			{
-				str_format(aBuf, sizeof(aBuf), "Not enough money\n%s: %d TC\nMoney: %d TC", Name, Price, m_pPlayer->m_AccData.m_Money);
+				//str_format(aBuf, sizeof(aBuf), "Not enough money\n%s: %d TC\nMoney: %d TC", Name, Price, m_pPlayer->m_AccData.m_Money);
 				m_LastBroadcast = Server()->Tick();
-				GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
+				GameServer()->SendBroadcast_Localization(m_pPlayer->GetCID(), 5, 5, 
+				"Not enough money\n{str:Name}: {int:TC} TC\nMoney: {int:uTC} TC",
+				"Name", Name, 
+				"TC", Price, 
+				"uTC", m_pPlayer->m_AccData.m_Money);
+				
+				//GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 			}
 		}
 		else
 		{
-			str_format(aBuf, sizeof(aBuf), "Maximum '%s' (%d/%d)", Name, *Upgrade, Max);
+			// str_format(aBuf, sizeof(aBuf), "Maximum '%s' (%d/%d)", Name, *Upgrade, Max);
 			m_LastBroadcast = Server()->Tick();
-			GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
+			GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_MAINCITY, "Maximum {str:Name} ({int:Upgrade}/{int:Max})", 
+			"Name", Name, 
+			"Upgrade", *Upgrade, 
+			"Max", Max);
+			//GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 		}
 	}
 	else if(Click == 2)
@@ -254,7 +273,13 @@ void CCharacter::Buy(const char *Name, int *Upgrade, int Price, int Click, int M
 		{
 			m_LastBroadcast = Server()->Tick();
 			str_format(aBuf, sizeof(aBuf), "%s (%d/%d)\nP: %d TC\nMoney: %d TC", Name, *Upgrade, Max, Price, m_pPlayer->m_AccData.m_Money);
-			GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
+			GameServer()->SendBroadcast_Localization(m_pPlayer->GetCID(), 5, 5, 
+			"{str:Name} ({int:Ug}/{int:Max})\nP: {int:Price} TC\nMoney: {int:uTC} TC", 
+			"Name", Name, 
+			"Ug", *Upgrade, 
+			"Max", Max, 
+			"Price", Price, 
+			"uTC", m_pPlayer->m_AccData.m_Money);
 		}
 	}
 }
