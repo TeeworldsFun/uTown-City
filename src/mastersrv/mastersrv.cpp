@@ -217,9 +217,9 @@ void AddCheckserver(NETADDR *pInfo, NETADDR *pAlt, ServerType Type)
 	}
 
 	char aAddrStr[NETADDR_MAXSTRSIZE];
-	net_addr_str(pInfo, aAddrStr, sizeof(aAddrStr), true);
+	net_addr_str(pInfo, aAddrStr, sizeof(aAddrStr));
 	char aAltAddrStr[NETADDR_MAXSTRSIZE];
-	net_addr_str(pAlt, aAltAddrStr, sizeof(aAltAddrStr), true);
+	net_addr_str(pAlt, aAltAddrStr, sizeof(aAltAddrStr));
 	dbg_msg("mastersrv", "checking: %s (%s)", aAddrStr, aAltAddrStr);
 	m_aCheckServers[m_NumCheckServers].m_Address = *pInfo;
 	m_aCheckServers[m_NumCheckServers].m_AltAddress = *pAlt;
@@ -237,7 +237,7 @@ void AddServer(NETADDR *pInfo, ServerType Type)
 		if(net_addr_comp(&m_aServers[i].m_Address, pInfo) == 0)
 		{
 			char aAddrStr[NETADDR_MAXSTRSIZE];
-			net_addr_str(pInfo, aAddrStr, sizeof(aAddrStr), true);
+			net_addr_str(pInfo, aAddrStr, sizeof(aAddrStr));
 			dbg_msg("mastersrv", "updated: %s", aAddrStr);
 			m_aServers[i].m_Expire = time_get()+time_freq()*EXPIRE_TIME;
 			return;
@@ -252,7 +252,7 @@ void AddServer(NETADDR *pInfo, ServerType Type)
 	}
 
 	char aAddrStr[NETADDR_MAXSTRSIZE];
-	net_addr_str(pInfo, aAddrStr, sizeof(aAddrStr), true);
+	net_addr_str(pInfo, aAddrStr, sizeof(aAddrStr));
 	dbg_msg("mastersrv", "added: %s", aAddrStr);
 	m_aServers[m_NumServers].m_Address = *pInfo;
 	m_aServers[m_NumServers].m_Expire = time_get()+time_freq()*EXPIRE_TIME;

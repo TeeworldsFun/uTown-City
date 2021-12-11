@@ -200,7 +200,7 @@ void CCharacter::SaveLoad(int Value)
 	}
 	else if(m_SavePos == vec2(0,0))
 	{
-		GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_SYSTEM, "[Load]: Set a position first"); 
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "[Load]: Set a position first"); 
 		return;
 	}
 	
@@ -230,41 +230,22 @@ void CCharacter::Buy(const char *Name, int *Upgrade, int Price, int Click, int M
 
 					m_BuyTick = Server()->Tick();
 					GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
-					GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_MAINCITY, 
-					"{str:Name} ({int:Upgrade}/{int:Max})", 
-					
-					"Name", Name, 
-					"Upgrade", *Upgrade, 
-					"Max", Max);
-					//str_format(aBuf, sizeof(aBuf), "Money: %d TC", m_pPlayer->m_AccData.m_Money);
-					GameServer()->SendBroadcast_Localization(m_pPlayer->GetCID(), 5, 5, 
-					"Money: {int:TC} TC", 
-					
-					"TC", m_pPlayer->m_AccData.m_Money);
+					str_format(aBuf, sizeof(aBuf), "Money: %d TC", m_pPlayer->m_AccData.m_Money);
+					GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 				}
 			}
 			else
 			{
-				//str_format(aBuf, sizeof(aBuf), "Not enough money\n%s: %d TC\nMoney: %d TC", Name, Price, m_pPlayer->m_AccData.m_Money);
+				str_format(aBuf, sizeof(aBuf), "Not enough money\n%s: %d TC\nMoney: %d TC", Name, Price, m_pPlayer->m_AccData.m_Money);
 				m_LastBroadcast = Server()->Tick();
-				GameServer()->SendBroadcast_Localization(m_pPlayer->GetCID(), 5, 5, 
-				"Not enough money\n{str:Name}: {int:TC} TC\nMoney: {int:uTC} TC",
-				"Name", Name, 
-				"TC", Price, 
-				"uTC", m_pPlayer->m_AccData.m_Money);
-				
-				//GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
+				GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 			}
 		}
 		else
 		{
-			// str_format(aBuf, sizeof(aBuf), "Maximum '%s' (%d/%d)", Name, *Upgrade, Max);
+			str_format(aBuf, sizeof(aBuf), "Maximum '%s' (%d/%d)", Name, *Upgrade, Max);
 			m_LastBroadcast = Server()->Tick();
-			GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_MAINCITY, "Maximum {str:Name} ({int:Upgrade}/{int:Max})", 
-			"Name", Name, 
-			"Upgrade", *Upgrade, 
-			"Max", Max);
-			//GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
+			GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 		}
 	}
 	else if(Click == 2)
@@ -273,13 +254,7 @@ void CCharacter::Buy(const char *Name, int *Upgrade, int Price, int Click, int M
 		{
 			m_LastBroadcast = Server()->Tick();
 			str_format(aBuf, sizeof(aBuf), "%s (%d/%d)\nP: %d TC\nMoney: %d TC", Name, *Upgrade, Max, Price, m_pPlayer->m_AccData.m_Money);
-			GameServer()->SendBroadcast_Localization(m_pPlayer->GetCID(), 5, 5, 
-			"{str:Name} ({int:Ug}/{int:Max})\nP: {int:Price} TC\nMoney: {int:uTC} TC", 
-			"Name", Name, 
-			"Ug", *Upgrade, 
-			"Max", Max, 
-			"Price", Price, 
-			"uTC", m_pPlayer->m_AccData.m_Money);
+			GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 		}
 	}
 }
@@ -908,12 +883,12 @@ void CCharacter::FireWeapon()
 
 	m_AttackTick = Server()->Tick();
 
-	if(m_aWeapons[m_ActiveWeapon].m_Ammo > 0 && !m_pPlayer->m_AccData.m_InfinityAmmo && !m_pPlayer->m_Insta && !m_pPlayer->m_Fng && !m_GameZone) // -1 == unlimited
+	if(m_aWeapons[m_ActiveWeapon].m_Ammo > 0 && !m_pPlayer->m_AccData.m_InfinityAmmo && !m_pPlayer->m_Insta && !m_pPlayer->m_Fun && !m_GameZone) // -1 == unlimited
 		m_aWeapons[m_ActiveWeapon].m_Ammo--;
 
 	if(!m_ReloadTimer)
 	{
-		if(!m_pPlayer->m_Insta && !m_pPlayer->m_Fng && !m_GameZone)
+		if(!m_pPlayer->m_Insta && !m_pPlayer->m_Fun && !m_GameZone)
 			m_ReloadTimer = g_pData->m_Weapons.m_aId[m_ActiveWeapon].m_Firedelay /(m_pPlayer->m_AccData.m_FastReload + 1) * Server()->TickSpeed() / 1000;
 		else
 			m_ReloadTimer = g_pData->m_Weapons.m_aId[m_ActiveWeapon].m_Firedelay * Server()->TickSpeed()/1000;
@@ -1408,7 +1383,7 @@ void CCharacter::Freeze(int Seconds)
 		m_FreezeWeapon = m_ActiveWeapon;
 
 	m_Frozen = Seconds;
-	m_aWeapons[WEAPON_NINJA].m_Ammo = 1;
+	m_aWeapons[WEAPON_NINJA].m_Ammo = 0;
 	SetWeapon(WEAPON_NINJA);
 }
 
@@ -1943,4 +1918,3 @@ void CCharacter::Snap(int SnappingClient)
 
 			
 }
-

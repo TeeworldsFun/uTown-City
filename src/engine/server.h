@@ -6,20 +6,6 @@
 #define ENGINE_SERVER_H
 #include "kernel.h"
 #include "message.h"
-#include <game/generated/protocol.h>
-#include <engine/shared/protocol.h>
-#include <string>
-#include <vector>
-
-enum
-{
-	CHATCATEGORY_SYSTEM=0,
-	CHATCATEGORY_FNG,
-	CHATCATEGORY_JAIL,
-	CHATCATEGORY_ACCOUNT,
-	CHATCATEGORY_MAINCITY,
-	CHATCATEGORY_INSTA,
-};
 
 class IServer : public IInterface
 {
@@ -27,17 +13,6 @@ class IServer : public IInterface
 protected:
 	int m_CurrentGameTick;
 	int m_TickSpeed;
-
-public:
-	class CLocalization* m_pLocalization;
-
-public:
-	enum
-	{
-		AUTHED_NO=0,
-		AUTHED_MOD,
-		AUTHED_ADMIN,
-	};
 
 public:
 	/*
@@ -48,8 +23,6 @@ public:
 		const char *m_pName;
 		int m_Latency;
 	};
-
-	virtual ~IServer() { };
 
 	int Tick() const { return m_CurrentGameTick; }
 	int TickSpeed() const { return m_TickSpeed; }
@@ -71,6 +44,7 @@ public:
 			return -1;
 		return SendMsg(&Packer, Flags, ClientID);
 	}
+
 	virtual void SetClientName(int ClientID, char const *pName) = 0;
 	virtual void SetClientClan(int ClientID, char const *pClan) = 0;
 	virtual void SetClientCountry(int ClientID, int Country) = 0;
@@ -99,11 +73,6 @@ public:
 	// Dummy
 	virtual void DummyJoin(int DummyID, const char *pDummyName, const char *pDummyClan, int Country) = 0;
 	virtual void DummyLeave(int DummyID, const char *pDummyName = 0) = 0;
-
-	virtual std::string GetClientIP(int ClientID) = 0;
-	virtual void SetClientLanguage(int ClientID, const char* pLanguage) = 0;
-
-	inline class CLocalization* Localization() { return m_pLocalization; }
 };
 
 class IGameServer : public IInterface
@@ -124,7 +93,7 @@ public:
 
 	virtual void OnClientConnected(int ClientID) = 0;
 	virtual void OnClientEnter(int ClientID) = 0;
-	virtual void OnClientDrop(int ClientID/*, int Type*/, const char *pReason) = 0;
+	virtual void OnClientDrop(int ClientID, const char *pReason) = 0;
 	virtual void OnClientDirectInput(int ClientID, void *pInput) = 0;
 	virtual void OnClientPredictedInput(int ClientID, void *pInput) = 0;
 
@@ -134,17 +103,7 @@ public:
 	virtual const char *GameType() = 0;
 	virtual const char *Version() = 0;
 	virtual const char *NetVersion() = 0;
-	
-	virtual void ClearBroadcast(int To, int Priority) = 0;
-	virtual void SendBroadcast_Localization(int To, int Priority, int LifeSpan, const char* pText, ...) = 0;
-	virtual void SendBroadcast_Localization_P(int To, int Priority, int LifeSpan, int Number, const char* pText, ...) = 0;
-	virtual void SendChatTarget(int To, const char* pText) = 0;
-	virtual void SendChatTarget_Localization(int To, int Category, const char* pText, ...) = 0;
-	virtual void SendChatTarget_Localization_P(int To, int Category, int Number, const char* pText, ...) = 0;
-	virtual void SendMOTD(int To, const char* pText) = 0;
-	virtual void SendMOTD_Localization(int To, const char* pText, ...) = 0;
 };
 
 extern IGameServer *CreateGameServer();
-
 #endif

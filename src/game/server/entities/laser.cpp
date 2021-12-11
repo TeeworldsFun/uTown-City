@@ -63,8 +63,8 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 	}
 	else if(!OwnerChar->GetPlayer()->m_Insta && !Hit->GetPlayer()->m_Insta && !OwnerChar->GetPlayer()->m_Fng && !Hit->GetPlayer()->m_Fng)
 		Hit->TakeDamage(vec2(0.f, 0.f), GameServer()->Tuning()->m_LaserDamage, m_Owner, WEAPON_RIFLE);
-	else if(OwnerChar->GetPlayer()->m_Fng && Hit->GetPlayer()->m_Fng && Hit->m_Frozen = false)
-		Hit->Freeze(5*50);
+	else if(OwnerChar->GetPlayer()->m_Fng && Hit->GetPlayer()->m_Fng)
+		Hit->Freeze(9);
 	// City
 	if(OwnerChar && !Hit->GetPlayer()->m_AccData.m_Arrested && !Hit->GetPlayer()->m_Insta && !Hit->Protected())
 	{
