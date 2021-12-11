@@ -19,6 +19,7 @@ public:
 
 		ACCESS_LEVEL_ADMIN=0,
 		ACCESS_LEVEL_MOD,
+		ACCESS_LEVEL_USER,
 
 		TEMPCMD_NAME_LENGTH=32,
 		TEMPCMD_HELP_LENGTH=96,
@@ -47,6 +48,7 @@ public:
 		// F2RconCmdsbyKlickFoot <3
 
 		virtual int GetVictim() = 0;
+		int GetClientID() { return m_ClientID; }
 	};
 
 	class CCommandInfo

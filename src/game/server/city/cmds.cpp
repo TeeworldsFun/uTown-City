@@ -5,6 +5,7 @@
 
 #include <engine/server.h>
 #include <game/version.h>
+#include <engine/console.h>
 #include "cmds.h"
 #include "account.h"
 
@@ -137,12 +138,12 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		CCharacter *pOwner = GameServer()->GetPlayerChar(m_pPlayer->GetCID());
 		
 		if(pOwner && pOwner->IsAlive())
+		{
 			pOwner->m_Home = m_pPlayer->m_AccData.m_HouseID;
 			dbg_msg("-.-", "/home: %i", pOwner->m_Home);
 		}
 
 		return;
-
 	} 
 	else if(!str_comp_nocase(Msg->m_pMessage, "/jailrifle"))
 	{
@@ -281,7 +282,8 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 	else if(!str_comp_nocase(Msg->m_pMessage, "/info"))
     {
 		LastChat();
-		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "\nuTown_v2.0 by Pikotee & KlickFoot");
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "\nuTown by Pikotee & KlickFoot");
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "\nuTown-City by FlowerFell-Sans ModReleaseVersion: v2.1.3");
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "\nDon't trust Blunk(Torben Weiss) and QuickTee/r00t they're stealing mods...");
 		return;
     }
@@ -302,6 +304,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		CCharacter *pOwner = GameServer()->GetPlayerChar(m_pPlayer->GetCID());
 		if(pOwner && pOwner->IsAlive())
 		{
+			m_pPlayer->m_Fng = false;
 			m_pPlayer->m_Insta^=1;
 			str_format(aBuf, sizeof(aBuf), "%s %s Instagib",GameServer()->Server()->ClientName(m_pPlayer->GetCID()),m_pPlayer->m_Insta?"joined":"left");
 			m_pPlayer->GetCharacter()->Die(m_pPlayer->GetCID(), WEAPON_GAME);
@@ -309,6 +312,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		}
 		else
 		{
+			m_pPlayer->m_Fng = false;
 			m_pPlayer->m_Insta^=1;
 			str_format(aBuf, sizeof(aBuf), "%s %s Instagib",GameServer()->Server()->ClientName(m_pPlayer->GetCID()),m_pPlayer->m_Insta?"joined":"left");
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
@@ -332,14 +336,16 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		CCharacter *pOwner = GameServer()->GetPlayerChar(m_pPlayer->GetCID());
 		if(pOwner && pOwner->IsAlive())
 		{
-			m_pPlayer->m_Fng^=1;
+			m_pPlayer->m_Insta = false;
+			m_pPlayer->m_Fng^=true;
 			str_format(aBuf, sizeof(aBuf), "%s %s Fng",GameServer()->Server()->ClientName(m_pPlayer->GetCID()),m_pPlayer->m_Fng?"joined":"left");
 			m_pPlayer->GetCharacter()->Die(m_pPlayer->GetCID(), WEAPON_GAME);
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
 		else
 		{
-			m_pPlayer->m_Fng^=1;
+			m_pPlayer->m_Insta = false;
+			m_pPlayer->m_Fng ^= true;
 			str_format(aBuf, sizeof(aBuf), "%s %s Fng",GameServer()->Server()->ClientName(m_pPlayer->GetCID()),m_pPlayer->m_Fng?"joined":"left");
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
@@ -413,6 +419,12 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 	{
 		LastChat();
 
+		return;
+	}
+	else if(!str_comp_nocase(Msg->m_pMessage, "/zw"))
+	{
+		GameServer()->Server()->SetClientLanguage(m_pPlayer->GetCID(), "cn-sim");
+		LastChat();
 		return;
 	}
 	else if(!str_comp_nocase(Msg->m_pMessage, "/god"))

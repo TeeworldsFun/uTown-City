@@ -6,6 +6,7 @@
 #define ENGINE_SERVER_SERVER_H
 
 #include <engine/server.h>
+#include <string>
 
 class CSnapIDPool
 {
@@ -46,6 +47,7 @@ class CServer : public IServer
 	class IGameServer *m_pGameServer;
 	class IConsole *m_pConsole;
 	class IStorage *m_pStorage;
+
 public:
 	class IGameServer *GameServer() { return m_pGameServer; }
 	class IConsole *Console() { return m_pConsole; }
@@ -59,7 +61,6 @@ public:
 
 		MAX_RCONCMD_SEND=16,
 	};
-
 	class CClient
 	{
 	public:
@@ -102,6 +103,7 @@ public:
 
 		char m_aName[MAX_NAME_LENGTH];
 		char m_aClan[MAX_CLAN_LENGTH];
+		char m_aLanguage[16];
 		int m_Country;
 		int m_Score;
 		int m_Authed;
@@ -128,6 +130,8 @@ public:
 	int m_RunServer;
 	int m_MapReload;
 	int m_RconClientID;
+	char m_aLanguage[16];
+	virtual void SetClientLanguage(int ClientID, const char* pLanguage);
 	int m_RconAuthLevel;
 	int m_PrintCBIndex;
 
@@ -162,6 +166,7 @@ public:
 	//int TickSpeed()
 
 	int Init();
+	std::string GetClientIP(int ClientID);
 
 	int AuthLvl(int ClientID);
 	bool IsAuthed(int ClientID);
@@ -237,6 +242,8 @@ public:
 	virtual void SnapFreeID(int ID);
 	virtual void *SnapNewItem(int Type, int ID, int Size);
 	void SnapSetStaticsize(int ItemType, int Size);
+
+	virtual const char* GetClientLanguage(int ClientID);
 };
 
 #endif

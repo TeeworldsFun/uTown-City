@@ -1,0 +1,18 @@
+{"language indices": [
+
+    {
+        "file": "en",
+        "name": "english"
+    },
+    {
+        "file": "cn-sim",
+        "name": "cn",
+        "parent": "en"
+    },
+    {
+        "file": "cn-tra",
+        "name": "chinese-tra",
+        "parent": "cn-sim"
+    }
+]
+}

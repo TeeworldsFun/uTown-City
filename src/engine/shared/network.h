@@ -327,6 +327,7 @@ public:
 	int BanGet(int Index, CBanInfo *pInfo); // caution, slow
 
 	// status requests
+	//const NETADDR *ClientAddr(int ClientID) const { return m_aSlots[ClientID].m_Connection.PeerAddress(); }
 	NETADDR ClientAddr(int ClientID) const { return m_aSlots[ClientID].m_Connection.PeerAddress(); }
 	NETSOCKET Socket() const { return m_Socket; }
 	int NetType() { return m_Socket.type; }

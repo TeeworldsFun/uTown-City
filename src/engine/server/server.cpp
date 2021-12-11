@@ -30,6 +30,8 @@
 #include "register.h"
 #include "server.h"
 
+#include <minecity/components/localization.h>
+
 #if defined(CONF_FAMILY_WINDOWS)
 	#define _WIN32_WINNT 0x0501
 	#define WIN32_LEAN_AND_MEAN
@@ -169,6 +171,7 @@ void CServer::CClient::Reset()
 	m_SnapRate = CClient::SNAPRATE_INIT;
 	m_Score = 0;
 	m_AccID = -1;
+	str_copy(m_aLanguage, "en", sizeof(m_aLanguage));
 }
 
 CServer::CServer() : m_DemoRecorder(&m_SnapshotDelta)
@@ -418,10 +421,17 @@ void CServer::GetClientAddr(int ClientID, char *pAddrStr, int Size)
 	{
 		NETADDR Addr = m_NetServer.ClientAddr(ClientID);
 		Addr.port = 0;
-		net_addr_str(&Addr, pAddrStr, Size);
+		net_addr_str(&Addr, pAddrStr, Size, true);
 	}
 }
 
+std::string CServer::GetClientIP(int ClientID)
+{
+	char aAddrStr[NETADDR_MAXSTRSIZE];
+	//net_addr_str(m_NetServer.ClientAddr(ClientID), aAddrStr, sizeof(aAddrStr), false);
+	std::string ip(aAddrStr);
+	return ip;
+}
 
 const char *CServer::ClientName(int ClientID)
 {
@@ -669,7 +679,7 @@ int CServer::DelClientCallback(int ClientID, const char *pReason, void *pUser)
 
 	NETADDR Addr = pThis->m_NetServer.ClientAddr(ClientID);
 	char aAddrStr[NETADDR_MAXSTRSIZE];
-	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 	char aBuf[256];
 	str_format(aBuf, sizeof(aBuf), "client dropped. cid=%d addr=%s reason='%s'", ClientID, aAddrStr,	pReason);
 	pThis->Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
@@ -844,7 +854,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 			{
 				Addr = m_NetServer.ClientAddr(ClientID);
 				char aAddrStr[NETADDR_MAXSTRSIZE];
-				net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+				net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 
 				char aBuf[256];
 				str_format(aBuf, sizeof(aBuf), "player is ready. ClientID=%x addr=%s", ClientID, aAddrStr);
@@ -860,7 +870,7 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 			{
 				Addr = m_NetServer.ClientAddr(ClientID);
 				char aAddrStr[NETADDR_MAXSTRSIZE];
-				net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+				net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 
 				char aBuf[256];
 				str_format(aBuf, sizeof(aBuf), "player has entered the game. ClientID=%x addr=%s", ClientID, aAddrStr);
@@ -1150,7 +1160,7 @@ int CServer::BanAdd(NETADDR Addr, int Seconds, const char *pReason)
 {
 	Addr.port = 0;
 	char aAddrStr[128];
-	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+	net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 	char aBuf[256];
 	if(Seconds)
 		str_format(aBuf, sizeof(aBuf), "banned %s for %d minutes", aAddrStr, Seconds/60);
@@ -1538,7 +1548,7 @@ void CServer::ConUnban(IConsole::IResult *pResult, void *pUser)
 	if(net_addr_from_str(&Addr, pStr) == 0 && !pServer->BanRemove(Addr))
 	{
 		char aAddrStr[NETADDR_MAXSTRSIZE];
-		net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+		net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 
 		char aBuf[256];
 		str_format(aBuf, sizeof(aBuf), "unbanned %s", aAddrStr);
@@ -1553,7 +1563,7 @@ void CServer::ConUnban(IConsole::IResult *pResult, void *pUser)
 		else if(!pServer->BanRemove(Info.m_Addr))
 		{
 			char aAddrStr[NETADDR_MAXSTRSIZE];
-			net_addr_str(&Info.m_Addr, aAddrStr, sizeof(aAddrStr));
+			net_addr_str(&Info.m_Addr, aAddrStr, sizeof(aAddrStr), true);
 
 			char aBuf[256];
 			str_format(aBuf, sizeof(aBuf), "unbanned %s", aAddrStr);
@@ -1577,7 +1587,7 @@ void CServer::ConBans(IConsole::IResult *pResult, void *pUser)
 		CNetServer::CBanInfo Info;
 		pServer->m_NetServer.BanGet(i, &Info);
 		NETADDR Addr = Info.m_Addr;
-		net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+		net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 
 		if(Info.m_Expires == -1)
 		{
@@ -1607,7 +1617,7 @@ void CServer::ConStatus(IConsole::IResult *pResult, void *pUser)
 		if(pServer->m_aClients[i].m_State != CClient::STATE_EMPTY)
 		{
 			Addr = pServer->m_NetServer.ClientAddr(i);
-			net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr));
+			net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
 			// Dummy
 			if(pServer->m_aClients[i].m_State == CClient::STATE_INGAME || pServer->m_aClients[i].m_State == CClient::STATE_DUMMY)
 				str_format(aBuf, sizeof(aBuf), "id=%d addr=%s name='%s' score=%d", i, pServer->m_aClients[i].m_State == CClient::STATE_DUMMY?"Dummy":aAddrStr,
@@ -1797,6 +1807,15 @@ int main(int argc, const char **argv) // ignore_convention
 	IStorage *pStorage = CreateStorage("Teeworlds", argc, argv); // ignore_convention
 	IConfig *pConfig = CreateConfig();
 
+
+	pServer->m_pLocalization = new CLocalization(pStorage);
+	pServer->m_pLocalization->InitConfig(0, NULL);
+	if(!pServer->m_pLocalization->Init())
+	{
+		dbg_msg("localization", "could not initialize localization");
+		return -1;
+	}
+
 	pServer->InitRegister(&pServer->m_NetServer, pEngineMasterServer, pConsole);
 
 	{
@@ -1844,6 +1863,7 @@ int main(int argc, const char **argv) // ignore_convention
 
 	// free
 	delete pServer;
+	delete pServer->m_pLocalization;
 	delete pKernel;
 	delete pEngineMap;
 	delete pGameServer;
@@ -1854,3 +1874,12 @@ int main(int argc, const char **argv) // ignore_convention
 	return 0;
 }
 
+const char* CServer::GetClientLanguage(int ClientID)
+{
+	return m_aClients[ClientID].m_aLanguage;
+}
+
+void CServer::SetClientLanguage(int ClientID, const char* pLanguage)
+{
+	str_copy(m_aClients[ClientID].m_aLanguage, pLanguage, sizeof(m_aClients[ClientID].m_aLanguage));
+}

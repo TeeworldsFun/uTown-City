@@ -225,6 +225,23 @@ bool IGameController::OnEntity(int Index, vec2 Pos)
 	return true;
 }
 
+/*bool IGameController::OnEntity_P(const char* pName, vec2 Pivot, vec2 P0, vec2 P1, vec2 P2, vec2 P3, int PosEnv)
+{
+	/*vec2 Pos = (P0 + P1 + P2 + P3)/4.0f;
+	
+	if(str_comp(pName, "icInfected") == 0)
+		m_SpawnPoints[0].add(Pos);
+	else if(str_comp(pName, "icHuman") == 0)
+		m_SpawnPoints[1].add(Pos);
+	
+	return false;
+}*/
+
+double IGameController::GetTime()
+{
+	return static_cast<double>(Server()->Tick() - m_RoundStartTick)/Server()->TickSpeed();
+}
+
 void IGameController::EndRound()
 {
 	if(m_Warmup) // game can't end when we are running warmup

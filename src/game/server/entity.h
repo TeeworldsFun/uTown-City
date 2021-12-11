@@ -110,7 +110,6 @@ public:
 		Function: snap
 			Called when a new snapshot is being generated for a specific
 			client.
-
 		Arguments:
 			snapping_client - ID of the client which snapshot is
 				being generated. Could be -1 to create a complete
@@ -123,13 +122,11 @@ public:
 		Function: networkclipped(int snapping_client)
 			Performs a series of test to see if a client can see the
 			entity.
-
 		Arguments:
 			snapping_client - ID of the client which snapshot is
 				being generated. Could be -1 to create a complete
 				snapshot of everything in the game for demo
 				recording.
-
 		Returns:
 			Non-zero if the entity doesn't have to be in the snapshot.
 	*/

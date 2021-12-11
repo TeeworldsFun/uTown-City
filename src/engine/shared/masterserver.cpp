@@ -192,7 +192,7 @@ public:
 		{
 			char aAddrStr[NETADDR_MAXSTRSIZE];
 			if(m_aMasterServers[i].m_Addr.type != NETTYPE_INVALID)
-				net_addr_str(&m_aMasterServers[i].m_Addr, aAddrStr, sizeof(aAddrStr));
+				net_addr_str(&m_aMasterServers[i].m_Addr, aAddrStr, sizeof(aAddrStr), true);
 			else
 				aAddrStr[0] = 0;
 			char aBuf[256];
