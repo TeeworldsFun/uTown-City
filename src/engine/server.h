@@ -6,7 +6,10 @@
 #define ENGINE_SERVER_H
 #include "kernel.h"
 #include "message.h"
+#include <game/generated/protocol.h>
+#include <engine/shared/protocol.h>
 #include <string>
+#include <vector>
 
 enum
 {
@@ -21,7 +24,6 @@ enum
 class IServer : public IInterface
 {
 	MACRO_INTERFACE("server", 0)
-
 protected:
 	int m_CurrentGameTick;
 	int m_TickSpeed;
@@ -38,6 +40,8 @@ public:
 		const char *m_pName;
 		int m_Latency;
 	};
+
+	virtual ~IServer() { };
 
 	int Tick() const { return m_CurrentGameTick; }
 	int TickSpeed() const { return m_TickSpeed; }
@@ -90,8 +94,7 @@ public:
 	virtual void DummyLeave(int DummyID, const char *pDummyName = 0) = 0;
 
 	virtual std::string GetClientIP(int ClientID) = 0;
-	virtual void SetClientLanguage(int ClientID, const char* pLanguage);
-	
+	virtual void SetClientLanguage(int ClientID, const char* pLanguage) = 0;
 
 	inline class CLocalization* Localization() { return m_pLocalization; }
 };

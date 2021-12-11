@@ -273,7 +273,7 @@ function build(settings)
 
 	-- make targets
 	c = PseudoTarget("client".."_"..settings.config_name, client_exe, client_depends)
-	s = PseudoTarget("server".."_"..settings.config_name, server_exe, serverlaunch)
+	s = PseudoTarget("server".."_"..settings.config_name, server_exe, serverlaunch, client_depends)
 	g = PseudoTarget("game".."_"..settings.config_name, client_exe, server_exe)
 
 	v = PseudoTarget("versionserver".."_"..settings.config_name, versionserver_exe)
