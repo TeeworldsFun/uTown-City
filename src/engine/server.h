@@ -32,6 +32,14 @@ public:
 	class CLocalization* m_pLocalization;
 
 public:
+	enum
+	{
+		AUTHED_NO=0,
+		AUTHED_MOD,
+		AUTHED_ADMIN,
+	};
+
+public:
 	/*
 		Structure: CClientInfo
 	*/
@@ -63,7 +71,6 @@ public:
 			return -1;
 		return SendMsg(&Packer, Flags, ClientID);
 	}
-
 	virtual void SetClientName(int ClientID, char const *pName) = 0;
 	virtual void SetClientClan(int ClientID, char const *pClan) = 0;
 	virtual void SetClientCountry(int ClientID, int Country) = 0;
@@ -127,8 +134,6 @@ public:
 	virtual const char *GameType() = 0;
 	virtual const char *Version() = 0;
 	virtual const char *NetVersion() = 0;
-	
-	virtual class CLayers *Layers() = 0;
 	
 	virtual void ClearBroadcast(int To, int Priority) = 0;
 	virtual void SendBroadcast_Localization(int To, int Priority, int LifeSpan, const char* pText, ...) = 0;

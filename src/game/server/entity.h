@@ -110,7 +110,6 @@ public:
 		Function: snap
 			Called when a new snapshot is being generated for a specific
 			client.
-
 		Arguments:
 			snapping_client - ID of the client which snapshot is
 				being generated. Could be -1 to create a complete
@@ -123,13 +122,11 @@ public:
 		Function: networkclipped(int snapping_client)
 			Performs a series of test to see if a client can see the
 			entity.
-
 		Arguments:
 			snapping_client - ID of the client which snapshot is
 				being generated. Could be -1 to create a complete
 				snapshot of everything in the game for demo
 				recording.
-
 		Returns:
 			Non-zero if the entity doesn't have to be in the snapshot.
 	*/
@@ -152,21 +149,6 @@ public:
 	bool m_Visible;
 	int m_Value;
 	int64 m_LastClick;
-};
-
-class CAnimatedEntity : public CEntity
-{
-protected:
-	vec2 m_Pivot;
-	vec2 m_RelPosition;
-	int m_PosEnv;
-
-protected:
-	virtual void Tick();
-
-public:
-	CAnimatedEntity(CGameWorld *pGameWorld, int Objtype, vec2 Pivot);
-	CAnimatedEntity(CGameWorld *pGameWorld, int Objtype, vec2 Pivot, vec2 RelPosition, int PosEnv);
 };
 
 #endif

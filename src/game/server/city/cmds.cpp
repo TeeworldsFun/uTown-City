@@ -5,6 +5,7 @@
 
 #include <engine/server.h>
 #include <game/version.h>
+#include <engine/console.h>
 #include "cmds.h"
 #include "account.h"
 
@@ -303,6 +304,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		CCharacter *pOwner = GameServer()->GetPlayerChar(m_pPlayer->GetCID());
 		if(pOwner && pOwner->IsAlive())
 		{
+			m_pPlayer->m_Fng = false;
 			m_pPlayer->m_Insta^=1;
 			str_format(aBuf, sizeof(aBuf), "%s %s Instagib",GameServer()->Server()->ClientName(m_pPlayer->GetCID()),m_pPlayer->m_Insta?"joined":"left");
 			m_pPlayer->GetCharacter()->Die(m_pPlayer->GetCID(), WEAPON_GAME);
@@ -310,6 +312,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		}
 		else
 		{
+			m_pPlayer->m_Fng = false;
 			m_pPlayer->m_Insta^=1;
 			str_format(aBuf, sizeof(aBuf), "%s %s Instagib",GameServer()->Server()->ClientName(m_pPlayer->GetCID()),m_pPlayer->m_Insta?"joined":"left");
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
@@ -333,14 +336,16 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		CCharacter *pOwner = GameServer()->GetPlayerChar(m_pPlayer->GetCID());
 		if(pOwner && pOwner->IsAlive())
 		{
-			m_pPlayer->m_Fng^=1;
+			m_pPlayer->m_Insta = false;
+			m_pPlayer->m_Fng^=true;
 			str_format(aBuf, sizeof(aBuf), "%s %s Fng",GameServer()->Server()->ClientName(m_pPlayer->GetCID()),m_pPlayer->m_Fng?"joined":"left");
 			m_pPlayer->GetCharacter()->Die(m_pPlayer->GetCID(), WEAPON_GAME);
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
 		else
 		{
-			m_pPlayer->m_Fng^=1;
+			m_pPlayer->m_Insta = false;
+			m_pPlayer->m_Fng ^= true;
 			str_format(aBuf, sizeof(aBuf), "%s %s Fng",GameServer()->Server()->ClientName(m_pPlayer->GetCID()),m_pPlayer->m_Fng?"joined":"left");
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 		}
@@ -416,15 +421,10 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 
 		return;
 	}
-	else if(!str_comp_nocase(Msg->m_pMessage, "/lang"))
+	else if(!str_comp_nocase(Msg->m_pMessage, "/zw"))
 	{
+		GameServer()->Server()->SetClientLanguage(m_pPlayer->GetCID(), "cn-sim");
 		LastChat();
-		if(sscanf(Msg->m_pMessage, "/lang cn-sim"))
-		{
-			GameServer()->SendChatTarget_Localization(m_pPlayer->GetCID(), CHATCATEGORY_SYSTEM, "");
-			return;
-		}
-
 		return;
 	}
 	else if(!str_comp_nocase(Msg->m_pMessage, "/god"))

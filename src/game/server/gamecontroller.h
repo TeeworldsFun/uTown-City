@@ -110,7 +110,7 @@ public:
 		Arguments:
 			chr - The CCharacter that was spawned.
 	*/
-	virtual bool OnEntity_P(const char* pName, vec2 Pivot, vec2 P0, vec2 P1, vec2 P2, vec2 P3, int PosEnv);
+	//virtual bool OnEntity_P(const char* pName, vec2 Pivot, vec2 P0, vec2 P1, vec2 P2, vec2 P3, int PosEnv);
 
 	/*
 		Function: on_CCharacter_spawn

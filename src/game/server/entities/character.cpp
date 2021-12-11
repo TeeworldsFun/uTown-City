@@ -1408,7 +1408,7 @@ void CCharacter::Freeze(int Seconds)
 		m_FreezeWeapon = m_ActiveWeapon;
 
 	m_Frozen = Seconds;
-	m_aWeapons[WEAPON_NINJA].m_Ammo = 0;
+	m_aWeapons[WEAPON_NINJA].m_Ammo = 1;
 	SetWeapon(WEAPON_NINJA);
 }
 
