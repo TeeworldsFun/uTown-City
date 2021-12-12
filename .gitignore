@@ -4,3 +4,5 @@
 /accounts/*.acc
 /teeworlds_srv
 /src/game/generated
+/.bam/**
+/build/**
