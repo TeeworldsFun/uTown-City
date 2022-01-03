@@ -61,7 +61,7 @@ class CGameContext : public IGameServer
 	CNetObjHandler m_NetObjHandler;
 	CTuningParams m_Tuning;
 
-	//Geolocation* geolocation;
+	static void ConsoleOutputCallback_Chat(const char *pStr, void *pUser);
 	
 	static void ConTuneParam(IConsole::IResult *pResult, void *pUserData);
 	static void ConTuneReset(IConsole::IResult *pResult, void *pUserData);
@@ -83,6 +83,10 @@ class CGameContext : public IGameServer
 	void Construct(int Resetting);
 
 	bool m_Resetting;
+
+	int m_ConsoleOutputHandle_ChatPrint;
+	int m_ConsoleOutput_Target;
+
 public:
 	IServer *Server() const { return m_pServer; }
 	//IStorage *Storage() const { return Storage; }
@@ -202,6 +206,8 @@ public:
 		static void ConLogout(IConsole::IResult *pResult, void *pUserData);
 		static void ConUnjail(IConsole::IResult *pResult, void *pUserData);
 
+		static bool ConLanguage(IConsole::IResult *pResult, void *pUserData);
+
 		public: //Ende :D
 
 	// City
@@ -250,7 +256,6 @@ public:
 	void AddBroadcast(int ClientID, const char* pText, int Priority, int LifeSpan);
 	virtual void SendChatTarget_Localization_P(int To, int Category, int Number, const char* pText, ...);
 	
-	static bool ConLanguage(IConsole::IResult *pResult, void *pUserData);
 	virtual void SendMOTD(int To, const char* pParam);
 	virtual void SendMOTD_Localization(int To, const char* pText, ...);
 };

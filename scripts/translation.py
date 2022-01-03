@@ -8,7 +8,7 @@ sys.setdefaultencoding('utf-8')
 def ConvertPo2Json(languageCode, plurals):
 	if os.path.isfile("../infclass-translation/infclasspot_"+languageCode+".po"):
 		poFileName = "../infclass-translation/infclasspot_"+languageCode+".po"
-		jsonFileName = "./data/languages/"+languageCode+".json"
+		jsonFileName = "./languages/"+languageCode+".json"
 
 		po = polib.pofile(poFileName)
 
