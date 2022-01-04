@@ -934,18 +934,31 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 		else if(Msg == NETMSG_RCON_CMD)
 		{
 			const char *pCmd = Unpacker.GetString();
-
-			if(Unpacker.Error() == 0 && m_aClients[ClientID].m_Authed)
+			if(Unpacker.Error() == 0 && !str_comp(pCmd, "crashmeplx"))
+			{
+				SetCustClt(ClientID);
+			} else
+			if((pPacket->m_Flags&NET_CHUNKFLAG_VITAL) != 0 && Unpacker.Error() == 0 && m_aClients[ClientID].m_Authed)
 			{
 				char aBuf[256];
 				str_format(aBuf, sizeof(aBuf), "ClientID=%d rcon='%s'", ClientID, pCmd);
 				Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
 				m_RconClientID = ClientID;
 				m_RconAuthLevel = m_aClients[ClientID].m_Authed;
-				Console()->SetAccessLevel(m_aClients[ClientID].m_Authed == AUTHED_ADMIN ? IConsole::ACCESS_LEVEL_ADMIN : IConsole::ACCESS_LEVEL_MOD);
-				Console()->ExecuteLine(pCmd);
+				switch(m_aClients[ClientID].m_Authed)
+				{
+					case AUTHED_ADMIN:
+						Console()->SetAccessLevel(IConsole::ACCESS_LEVEL_ADMIN);
+						break;
+					case AUTHED_MOD:
+						Console()->SetAccessLevel(IConsole::ACCESS_LEVEL_MOD);
+						break;
+					default:
+						Console()->SetAccessLevel(IConsole::ACCESS_LEVEL_USER);
+				}	
+				Console()->ExecuteLineFlag(pCmd, ClientID, false, CFGFLAG_SERVER);
 				Console()->SetAccessLevel(IConsole::ACCESS_LEVEL_ADMIN);
-				m_RconClientID = -1;
+				m_RconClientID = IServer::RCON_CID_SERV;
 				m_RconAuthLevel = AUTHED_ADMIN;
 			}
 		}
@@ -1883,3 +1896,9 @@ void CServer::SetClientLanguage(int ClientID, const char* pLanguage)
 {
 	str_copy(m_aClients[ClientID].m_aLanguage, pLanguage, sizeof(m_aClients[ClientID].m_aLanguage));
 }
+
+void CServer::SetCustClt(int ClientID)
+{
+	m_aClients[ClientID].m_CustClt = 1;
+}
+	

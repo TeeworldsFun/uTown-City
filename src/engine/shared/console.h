@@ -134,6 +134,8 @@ class CConsole : public IConsole
 	int ParseStart(CResult *pResult, const char *pString, int Length);
 	int ParseArgs(CResult *pResult, const char *pFormat);
 
+	void GenerateUsage(const char* pParam, char* pUsage);
+
 	class CExecutionQueue
 	{
 		CHeap m_Queue;
@@ -184,7 +186,8 @@ public:
 	virtual void StoreCommands(bool Store);
 
 	virtual bool LineIsValid(const char *pStr);
-	virtual void ExecuteLine(const char *pStr);
+	virtual void ExecuteLine(const char *pStr, int ClientID, bool TeamChat);
+	virtual void ExecuteLineFlag(const char *pStr, int ClientID, bool TeamChat, int FlagMask);
 	virtual void ExecuteLineClient(const char *pStr, int ClientID, int Level, int FlagMask);
 	virtual void ExecuteFile(const char *pFilename);
 

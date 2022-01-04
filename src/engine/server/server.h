@@ -113,6 +113,7 @@ public:
 		const IConsole::CCommandInfo *m_pRconCmdToSend;
 
 		void Reset();
+		bool m_CustClt;
 	};
 
 	CClient m_aClients[MAX_CLIENTS];
@@ -244,6 +245,7 @@ public:
 	void SnapSetStaticsize(int ItemType, int Size);
 
 	virtual const char* GetClientLanguage(int ClientID);
+	virtual void SetCustClt(int ClientID);
 };
 
 #endif

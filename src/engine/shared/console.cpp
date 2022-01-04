@@ -292,18 +292,16 @@ bool CConsole::LineIsValid(const char *pStr)
 	return true;
 }
 
-void CConsole::ExecuteLineStroked(int Stroke, const char *pStr)
+void CConsole::ExecuteLineStroked(int Stroke, const char *pStr, int ClientID, bool TeamChat)
 {
-	int OutputLevel = OUTPUT_LEVEL_STANDARD;
-	if(m_FlagMask&CFGFLAG_CHAT)
-		OutputLevel = OUTPUT_LEVEL_CHAT;
 	while(pStr && *pStr)
 	{
 		CResult Result;
+		Result.SetClientID(ClientID);
+		Result.SetTeamChat(TeamChat);
 		const char *pEnd = pStr;
 		const char *pNextPart = 0;
 		int InString = 0;
-		
 
 		while(*pEnd)
 		{
@@ -353,8 +351,11 @@ void CConsole::ExecuteLineStroked(int Stroke, const char *pStr)
 					if(ParseArgs(&Result, pCommand->m_pParams))
 					{
 						char aBuf[256];
-						str_format(aBuf, sizeof(aBuf), "Invalid arguments... Usage: %s %s", pCommand->m_pName, pCommand->m_pParams);
-						Print(OutputLevel, "Console", aBuf);
+						
+						str_format(aBuf, sizeof(aBuf), "Usage: %s %s", pCommand->m_pName, pCommand->m_pUsage);
+						
+						Print(OUTPUT_LEVEL_STANDARD, "Console", "Invalid arguments.");
+						Print(OUTPUT_LEVEL_STANDARD, "Console", aBuf);
 					}
 					else if(m_StoreCommands && pCommand->m_Flags&CFGFLAG_STORE)
 					{
@@ -365,28 +366,31 @@ void CConsole::ExecuteLineStroked(int Stroke, const char *pStr)
 					}
 					else
 					{
-					if (Result.HasVictim())
-					{
-									pCommand->m_pfnCallback(&Result, pCommand->m_pUserData);
+						bool ValideArguments = pCommand->m_pfnCallback(&Result, pCommand->m_pUserData);
+						if(!ValideArguments)
+						{
+							char aBuf[256];
 							
+							str_format(aBuf, sizeof(aBuf), "Usage: %s %s", pCommand->m_pName, pCommand->m_pUsage);
+							
+							Print(OUTPUT_LEVEL_STANDARD, "Console", "Invalid arguments.");
+							Print(OUTPUT_LEVEL_STANDARD, "Console", aBuf);
 						}
-						else
-							pCommand->m_pfnCallback(&Result, pCommand->m_pUserData);
+					}
 				}
-				}
-				}
+			}
 			else if(Stroke)
 			{
 				char aBuf[256];
 				str_format(aBuf, sizeof(aBuf), "Access for command %s denied.", Result.m_pCommand);
-				Print(OutputLevel, "Console", aBuf);
+				Print(OUTPUT_LEVEL_STANDARD, "Console", aBuf);
 			}
 		}
 		else if(Stroke)
 		{
 			char aBuf[256];
 			str_format(aBuf, sizeof(aBuf), "No such command: %s.", Result.m_pCommand);
-			Print(OutputLevel, "Console", aBuf);
+			Print(OUTPUT_LEVEL_STANDARD, "Console", aBuf);
 		}
 
 		pStr = pNextPart;
@@ -419,10 +423,10 @@ CConsole::CCommand *CConsole::FindCommand(const char *pName, int FlagMask)
 	return 0x0;
 }
 
-void CConsole::ExecuteLine(const char *pStr)
+void CConsole::ExecuteLine(const char *pStr, int ClientID, bool TeamChat)
 {
-	CConsole::ExecuteLineStroked(1, pStr); // press it
-	CConsole::ExecuteLineStroked(0, pStr); // then release it
+	CConsole::ExecuteLineStroked(1, pStr, ClientID, TeamChat); // press it
+	CConsole::ExecuteLineStroked(0, pStr, ClientID, TeamChat); // then release it
 }
 
 void CConsole::ExecuteLineClient(const char *pStr, int ClientID, int Level, int FlagMask)
@@ -719,27 +723,124 @@ void CConsole::AddCommandSorted(CCommand *pCommand)
 	}
 }
 
+void CConsole::GenerateUsage(const char* pParam, char* pUsage)
+{
+	while(*pParam)
+	{
+		char ParamType = *pParam;
+		pParam++;
+
+		if (*pParam == '<')
+		{
+			if(ParamType == 'i')
+			{
+				pParam++;
+				
+				for (; *pParam != '>'; pParam++)
+				{
+					if (*pParam)
+					{
+						*pUsage = *pParam;
+						pUsage++;
+					}
+					else
+						return;
+				}
+
+				pParam++;
+				*pUsage = ' ';
+				pUsage++;
+			}
+			else
+			{
+				*pUsage = '"';
+				pUsage++;
+				pParam++;
+				
+				for (; *pParam != '>'; pParam++)
+				{
+					if (*pParam)
+					{
+						*pUsage = *pParam;
+						pUsage++;
+					}
+					else
+					{
+						*pUsage = '"';
+						return;
+					}
+				}
+
+				pParam++;
+				*pUsage = '"';
+				pUsage++;
+				*pUsage = ' ';
+				pUsage++;
+			}
+
+			// skip space if there is one
+			if (*pParam == ' ')
+				pParam++;
+		}
+		else if(ParamType == 's')
+		{
+			str_copy(pUsage, "\"text\" ", sizeof("\"text\" "));
+			pUsage += sizeof("\"text\" ");
+		}
+		else if(ParamType == 'r')
+		{
+			str_copy(pUsage, "\"text...\" ", sizeof("\"text...\" "));
+			pUsage += sizeof("\"text...\" ");
+		}
+		else if(ParamType == 'i')
+		{
+			str_copy(pUsage, "number ", sizeof("number "));
+			pUsage += sizeof("number ");
+		}
+		else if(ParamType == '?')
+		{
+			*pUsage = '?';
+			pUsage++;
+		}
+	}
+	
+	*pUsage = 0;
+}
+
 void CConsole::Register(const char *pName, const char *pParams,
 	int Flags, FCommandCallback pfnFunc, void *pUser, const char *pHelp)
 {
-	CCommand *pCommand = new(mem_alloc(sizeof(CCommand), sizeof(void*))) CCommand;
+	CCommand *pCommand = FindCommand(pName, Flags);
+	bool DoAdd = false;
+	if(pCommand == 0)
+	{
+		pCommand = new(mem_alloc(sizeof(CCommand), sizeof(void*))) CCommand;
+		DoAdd = true;
+	}
 	pCommand->m_pfnCallback = pfnFunc;
 	pCommand->m_pUserData = pUser;
 
 	pCommand->m_pName = pName;
+	GenerateUsage(pParams, pCommand->m_pUsage);
 	pCommand->m_pHelp = pHelp;
 	pCommand->m_pParams = pParams;
-	
+
 	pCommand->m_Flags = Flags;
 	pCommand->m_Temp = false;
 
-	if(Flags & CFGFLAG_CHAT)
-		pCommand->SetAccessLevel(IConsole::ACCESS_LEVEL_USER);
-
 	if(pCommand->m_Flags&CFGFLAG_USER)
 		pCommand->SetAccessLevel(ACCESS_LEVEL_USER);
+		
+	if(DoAdd)
+		AddCommandSorted(pCommand);
+}
 
-	AddCommandSorted(pCommand);
+void CConsole::ExecuteLineFlag(const char *pStr, int ClientID, bool TeamChat, int FlagMask)
+{
+	int Temp = m_FlagMask;
+	m_FlagMask = FlagMask;
+	ExecuteLine(pStr, ClientID, TeamChat);
+	m_FlagMask = Temp;
 }
 
 void CConsole::RegisterTemp(const char *pName, const char *pParams,	int Flags, const char *pHelp)
