@@ -1,4 +1,6 @@
 Origin uTown mod by Pikotee
+uTown-City base on Pikotee's uTown
+https://github.com/Pikotee/teeworlds/tree/uTown/
 --------------------------Teeworlds----------------------------------
 Copyright (c) 2011 Magnus Auvinen
 
