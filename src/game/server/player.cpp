@@ -18,12 +18,14 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_ScoreStartTick = Server()->Tick();
 	m_pCharacter = 0;
 	m_ClientID = ClientID;
-	m_Team = GameServer()->m_pController->ClampTeam(Team);
+	m_Team = TEAM_SPECTATORS;
 	m_SpectatorID = SPEC_FREEVIEW;
 	m_LastActionTick = Server()->Tick();
 	m_TeamChangeTick = Server()->Tick();
 
 	// City
+	m_Score = 1;
+	Language = 1;
 	m_Rainbow = false;
 	m_Insta = false;
 	m_Fng = false;
@@ -60,6 +62,14 @@ void CPlayer::Tick()
 	Server()->SetClientAccID(m_ClientID, m_AccData.m_UserID);
 	m_pAccount->PlayerLevelUp();
 
+	if(m_Team == TEAM_SPECTATORS && !m_AccData.m_UserID)
+	{
+		if(Server()->Tick()%50 == 0)
+			GameServer()->SendBroadcast("\n\n输入'/register <用户名> <密码>' 注册\n输入'/login <用户名> <密码>'登录\n\n\n\n\n登录后才可以进入游戏!\nOnly join when you Login!\n\n\n\n\nType '/register <Username> <Password>' to register\nType '/login <Username> <Password>' to login", m_ClientID);
+	}
+
+	if(!m_AccData.m_UserID && m_Team != TEAM_SPECTATORS)
+		m_Team = TEAM_SPECTATORS;
 
 	if(Server()->Tick()%50 == 0)
 	{
@@ -342,6 +352,8 @@ void CPlayer::Respawn()
 
 void CPlayer::SetTeam(int Team)
 {
+	if(!m_AccData.m_UserID)
+		return;
 	// clamp the team
 	Team = GameServer()->m_pController->ClampTeam(Team);
 	if(m_Team == Team)

@@ -602,6 +602,7 @@ void CGameContext::OnClientPredictedInput(int ClientID, void *pInput)
 
 void CGameContext::OnClientEnter(int ClientID)
 {
+	CreateSoundGlobal(SOUND_MENU, m_apPlayers[ClientID]->GetCID());
 	//world.insert_entity(&players[client_id]);
 	m_apPlayers[ClientID]->Respawn();
 	char aBuf[512];

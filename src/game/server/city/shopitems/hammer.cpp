@@ -156,9 +156,9 @@ void CHammer::Snap(int SnappingClient)
 	}
 	else if(m_Type == 4)// House
 	{
-		CNetObj_Laser *pObj[3];
+		CNetObj_Laser *pObj[10];
 	
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < 10; i++)
 		{
 			pObj[i] = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_IDs[i], sizeof(CNetObj_Laser)));
 

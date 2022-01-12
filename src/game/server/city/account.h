@@ -20,6 +20,8 @@ public:
 	void NewUsername(char *NewUsername);
 	bool Exists(const char * Username);
 
+	int GetNeedForUp();
+
 	static const int MAX_SERVER = 2;
 	int NextID();
 

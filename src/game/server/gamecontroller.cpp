@@ -413,18 +413,9 @@ int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *
 						pKiller->m_AccData.m_Money += 500;
 			pKiller->m_AccData.m_ExpPoints += 1;
 			pKiller->m_Score = pKiller->m_AccData.m_Level;
-			if(pKiller->m_pAccount->GetPlayerExp() >= pKiller->m_pAccount->GetPlayerLevel()*3)
-			{
-				str_format(aKillmsg, sizeof(aKillmsg), "Player level up! || Now you Level:%i",pKiller->m_AccData.m_Level);
-					pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
-				pKiller->m_AccData.m_ExpPoints = 0;
-				pKiller->m_AccData.m_Level++;
-			}
-			else
-			{
-				str_format(aKillmsg, sizeof(aKillmsg), "+1 Exp || current:%i",pKiller->m_AccData.m_ExpPoints);
-					pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
-			}
+			pKiller->m_pAccount->PlayerLevelUp();
+			str_format(aKillmsg, sizeof(aKillmsg), "+%d Exp || current:%i", pKiller->GetCharacter()->m_InstaKills * 500, pKiller->m_AccData.m_ExpPoints);
+				pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
 			char aBuf[256];
 			str_format(aKillmsg, sizeof(aKillmsg), "+500 TC || current %i TC",pKiller->m_AccData.m_Money);
 				pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
@@ -436,26 +427,17 @@ int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *
 			{
 				char aKillmsg[200];
 				char aBuf[50];
-				pKiller->m_AccData.m_ExpPoints += 1;
+				pKiller->m_AccData.m_ExpPoints += pKiller->GetCharacter()->m_InstaKills * 500;
 				pKiller->GetCharacter()->m_InstaKills++;
 				pKiller->m_AccData.m_Money += 1000+(pKiller->GetCharacter()->m_InstaKills*100);
-				if(pKiller->m_pAccount->GetPlayerExp() >= pKiller->m_pAccount->GetPlayerLevel()*3)
-				{
-					pKiller->m_AccData.m_Level++;
-					str_format(aKillmsg, sizeof(aKillmsg), "Player level up! || Now you Level:%i",pKiller->m_AccData.m_Level);
+				pKiller->m_pAccount->PlayerLevelUp();
+			
+				str_format(aKillmsg, sizeof(aKillmsg), "+%d Exp || Current: %i Exp || %i Insta-Kills", pKiller->m_AccData.m_ExpPoints, pKiller->GetCharacter()->m_InstaKills);
 					pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
-					pKiller->m_AccData.m_ExpPoints = 0;
-				}
-				else
-				{
-					pKiller->m_AccData.m_ExpPoints += 2;
-					str_format(aKillmsg, sizeof(aKillmsg), "+2 Exp || Current: %i Exp || %i Insta-Kills",pKiller->m_AccData.m_ExpPoints,pKiller->GetCharacter()->m_InstaKills);
-						pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
-					str_format(aKillmsg, sizeof(aKillmsg), "+%i TC || Current: %i TC",pKiller->GetCharacter()->m_InstaKills*100+1000,pKiller->m_AccData.m_Money,pKiller->GetCharacter()->m_InstaKills);
-						pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
-					str_format(aBuf, sizeof(aBuf), "Level: %i || Exp: %i",pKiller->m_AccData.m_Level, pKiller->m_AccData.m_ExpPoints);
-						GameServer()->SendBroadcast(aBuf, pKiller->GetCID());
-				}
+				str_format(aKillmsg, sizeof(aKillmsg), "+%i TC || Current: %i TC",pKiller->GetCharacter()->m_InstaKills*100+1000,pKiller->m_AccData.m_Money,pKiller->GetCharacter()->m_InstaKills);
+					pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
+				str_format(aBuf, sizeof(aBuf), "Level: %i || Exp: %i",pKiller->m_AccData.m_Level, pKiller->m_AccData.m_ExpPoints);
+					GameServer()->SendBroadcast(aBuf, pKiller->GetCID());
 
 				if(pVictim->m_InstaKills >= 5)
 				{
@@ -484,20 +466,11 @@ int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *
 			{
 				char aKillmsg[50];
 						pKiller->m_AccData.m_Money += 500;
-			pKiller->m_AccData.m_ExpPoints += 1;
+			pKiller->GetCharacter()->m_FngKills * 500;
 			pKiller->m_Score = pKiller->m_AccData.m_Level;
-			if(pKiller->m_pAccount->GetPlayerExp() >= pKiller->m_pAccount->GetPlayerLevel()*3)
-			{
-				pKiller->m_AccData.m_Level++;
-				str_format(aKillmsg, sizeof(aKillmsg), "Player level up! || Now you Level:%i",pKiller->m_AccData.m_Level);
-					pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
-				pKiller->m_AccData.m_ExpPoints = 0;
-			}
-			else
-			{
-				str_format(aKillmsg, sizeof(aKillmsg), "+1 Exp || current:%i",pKiller->m_AccData.m_ExpPoints);
-					pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
-			}
+			pKiller->m_pAccount->PlayerLevelUp();
+			str_format(aKillmsg, sizeof(aKillmsg), "+%d Exp || current:%i", pKiller->GetCharacter()->m_FngKills * 500, pKiller->m_AccData.m_ExpPoints);
+				pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
 			char aBuf[256];
 			str_format(aKillmsg, sizeof(aKillmsg), "+500 TC || current %i TC",pKiller->m_AccData.m_Money);
 				pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
@@ -508,30 +481,22 @@ int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *
 			else
 			{
 				char aKillmsg[200];
-				char aBuf[50];
-				pKiller->m_AccData.m_ExpPoints += 1;
+				char aBuf[256];
+				pKiller->m_AccData.m_ExpPoints += pKiller->GetCharacter()->m_InstaKills * 500;
 				pKiller->GetCharacter()->m_FngKills++;
 				pKiller->m_AccData.m_Money += 1000+(pKiller->GetCharacter()->m_FngKills*100);
-				if(pKiller->m_pAccount->GetPlayerExp() >= pKiller->m_pAccount->GetPlayerLevel()*3)
-				{
-					pKiller->m_AccData.m_Level++;
-					str_format(aKillmsg, sizeof(aKillmsg), "Player level up! || Now you Level:%i",pKiller->m_AccData.m_Level);
+				pKiller->m_pAccount->PlayerLevelUp();
+				str_format(aKillmsg, sizeof(aKillmsg), "+3 Exp || Current: %i Exp || %i FNG-Kills",pKiller->m_AccData.m_ExpPoints,pKiller->GetCharacter()->m_FngKills);
 					pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
-					pKiller->m_AccData.m_ExpPoints = 0;
-				}
-				else
-				{
-					pKiller->m_AccData.m_ExpPoints += 2;
-					str_format(aKillmsg, sizeof(aKillmsg), "+3 Exp || Current: %i Exp || %i FNG-Kills",pKiller->m_AccData.m_ExpPoints,pKiller->GetCharacter()->m_FngKills);
-						pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
-					str_format(aKillmsg, sizeof(aKillmsg), "+%i TC || Current: %i TC",pKiller->GetCharacter()->m_FngKills*100+1000,pKiller->m_AccData.m_Money,pKiller->GetCharacter()->m_FngKills);
-						pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
-					str_format(aBuf, sizeof(aBuf), "Level: %i || Exp: %i",pKiller->m_AccData.m_Level, pKiller->m_AccData.m_ExpPoints);
-						GameServer()->SendBroadcast(aBuf, pKiller->GetCID());
+				str_format(aKillmsg, sizeof(aKillmsg), "+%i TC || Current: %i TC",pKiller->GetCharacter()->m_FngKills*100+1000,pKiller->m_AccData.m_Money,pKiller->GetCharacter()->m_FngKills);
+					pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
+				str_format(aBuf, sizeof(aBuf), "Level: %i || Exp: %i",pKiller->m_AccData.m_Level, pKiller->m_AccData.m_ExpPoints);
+					GameServer()->SendBroadcast(aBuf, pKiller->GetCID());
 				}
 
 				if(pVictim->m_FngKills >= 5)
 				{
+					char aBuf[256];
 					str_format(aBuf, sizeof(aBuf), "%s killed %s with %i kills", Server()->ClientName(pKiller->GetCID()), Server()->ClientName(pVictim->GetPlayer()->GetCID()),pVictim->m_InstaKills);
 					GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 				}
@@ -539,6 +504,7 @@ int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *
 				//Kill msg 4 all <3
 				if(!(pKiller->GetCharacter()->m_FngKills%5) && pKiller->GetCharacter()->m_FngKills <= 50)
 				{
+					char aBuf[256];
 					if(pKiller->GetCharacter()->m_FngKills == 5)
 						str_format(aBuf, sizeof(aBuf), "%s is on a killing spree with 5 kills", Server()->ClientName(pKiller->GetCID()));
 					else if(pKiller->GetCharacter()->m_FngKills == 10)
@@ -549,13 +515,10 @@ int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *
 						str_format(aBuf, sizeof(aBuf), "%s is Godlike! (50 kills)", Server()->ClientName(pKiller->GetCID()));
 
 					GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
-				}
-				
+				}	
 			}
-
-
-		}
 	}
+
 	if(Weapon == WEAPON_SELF)
 		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*3.0f;
 	return 0;

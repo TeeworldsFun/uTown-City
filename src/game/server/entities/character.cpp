@@ -1452,7 +1452,7 @@ void CCharacter::Transfer(int Value)
 
 void CCharacter::HandleCity()
 {
-	char aBuf[128];
+	char aBuf[10000];
 
 	HealthRegeneration();
 
@@ -1497,11 +1497,11 @@ void CCharacter::HandleCity()
 
 	if(m_Invisible && m_pPlayer->m_Score > 20)
 	{
-		GameServer()->SendBroadcast("Invisibility disabled, Score > 20", m_pPlayer->GetCID());
+		GameServer()->SendBroadcast("Invisibility disabled, Level > 20", m_pPlayer->GetCID());
 		m_Invisible = 0;
 	}
 
-	if(Server()->Tick()%50 == 0)
+	if(Server()->Tick()%45 == 0)
 	{
 		int Money = GameServer()->Collision()->TileMoney(m_Pos.x, m_Pos.y);
 	
@@ -1511,7 +1511,8 @@ void CCharacter::HandleCity()
 				Money *= 2;
 
 			m_pPlayer->m_AccData.m_Money += Money;
-			str_format(aBuf, sizeof(aBuf), "Money: %d TC | +%d", m_pPlayer->m_AccData.m_Money, Money);
+			m_pPlayer->m_AccData.m_ExpPoints += Money;
+			str_format(aBuf, sizeof(aBuf), "\n\n\n\n\n\n\n\n\n\n\n\n\n              ________________________________________\n              |Money: %d TC \n              |&&             +%d\n              |Exp:  %d/%d  \n              |\n              |\n              |\n              |Level: %d\n              |\n              |\n              |", m_pPlayer->m_AccData.m_Money, Money, m_pPlayer->m_AccData.m_ExpPoints, m_pPlayer->m_AccData.m_Level*m_pPlayer->m_pAccount->GetNeedForUp(), m_pPlayer->m_AccData.m_Level);
 			GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 		}
 	

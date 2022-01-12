@@ -7,6 +7,7 @@
 #include "account.h"
 #include "game/server/gamecontroller.h"
 #include "game/server/gamecontext.h"
+#include <game/server/languages.h>
 //#include "minecity/components/localization.h"
 
 #if defined(CONF_FAMILY_WINDOWS)
@@ -38,12 +39,42 @@ CAccount::CAccount(CPlayer *pPlayer, CGameContext *pGameServer)
 
 int CAccount::PlayerLevelUp()
 {
-	int m_Level = GetPlayerLevel()*3;
-	if(GetPlayerExp() >= m_Level)
+	if(m_pPlayer->m_AccData.m_UserID)
 	{
-		m_pPlayer->m_AccData.m_Level++;
-		m_pPlayer->m_AccData.m_ExpPoints = 0;
+		bool upgraded = false;
+		long int NeedExp = m_pPlayer->m_AccData.m_Level*GetNeedForUp();
+		while(m_pPlayer->m_AccData.m_ExpPoints >= NeedExp)
+		{
+			upgraded = true;
+			m_pPlayer->m_AccData.m_ExpPoints -= m_pPlayer->m_AccData.m_Level*GetNeedForUp();
+			NeedExp = m_pPlayer->m_AccData.m_Level*GetNeedForUp();
+			m_pPlayer->m_AccData.m_Money += 1000;
+			if(m_pPlayer->m_AccData.m_Level == 2)
+				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "FIRST STEP!.");		
+		}
+		if(upgraded)
+		{
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "[Level UP] 恭喜你你升级了.");
+			GameServer()->CreateSoundGlobal(SOUND_CTF_CAPTURE, m_pPlayer->GetCID());
+			m_pPlayer->m_AccData.m_Level++;
+		}
 	}
+}
+
+int CAccount::GetNeedForUp()
+{
+	//玩家升级所需经验基数赋值
+	if(m_pPlayer->m_AccData.m_Level < 100) return 500;
+	else if(m_pPlayer->m_AccData.m_Level < 200) return 10000;
+	else if(m_pPlayer->m_AccData.m_Level < 300) return 50000;
+	else if(m_pPlayer->m_AccData.m_Level < 400) return 80000;
+	else if(m_pPlayer->m_AccData.m_Level < 500) return 110000;
+	else if(m_pPlayer->m_AccData.m_Level < 600) return 130000;
+	else if(m_pPlayer->m_AccData.m_Level < 700) return 160000;
+	else if(m_pPlayer->m_AccData.m_Level < 1000) return 190000;
+	else if(m_pPlayer->m_AccData.m_Level < 1100) return 240000;
+	else if(m_pPlayer->m_AccData.m_Level < 1200) return 300000;
+	else return 400000;
 }
 
 int CAccount::GetPlayerLevel()
@@ -84,9 +115,8 @@ void CAccount::Login(char *Username, char *Password)
 		dbg_msg("account", "Account login failed ('%s' - Missing)", Username);
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "This account does not exist.");
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Please register first. (/register <user> <pass>)");
-		return;// FNG没写完 你去mapitem.h的TILE_*结尾，加一个TILE_FNG_CHECK,
-	}// ok
-	// 或者你在languages-dump.json里写所有的对话信息，我去写点作业
+		return;
+	}
 	str_format(aBuf, sizeof(aBuf), "accounts/%s.acc", Username);
 
 	char AccUsername[32];
@@ -142,11 +172,12 @@ void CAccount::Login(char *Username, char *Password)
 
 	Accfile = fopen(aBuf, "r"); 		
 
-	fscanf(Accfile, "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d", 
+	fscanf(Accfile, "%s\n%s\n%s\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n\nEasyAdd", 
 		m_pPlayer->m_AccData.m_Username, // Done
 		m_pPlayer->m_AccData.m_Password, // Done
 		m_pPlayer->m_AccData.m_RconPassword, 
 		&m_pPlayer->m_AccData.m_UserID, // Done
+		&m_pPlayer->m_AccData.m_Language, // Down(??)
 
 		&m_pPlayer->m_AccData.m_HouseID, // Done
  		&m_pPlayer->m_AccData.m_Money, // Done
@@ -214,7 +245,21 @@ void CAccount::Login(char *Username, char *Password)
 
 	else if(str_comp(m_pPlayer->m_AccData.m_RconPassword,g_Config.m_SvRconPassword) == 0)
 		GameServer()->Server()->SetRconlvl(m_pPlayer->GetCID(),2);
-	
+
+	if(m_pPlayer->m_AccData.m_Level <= 10)
+	{
+		GameServer()->SendBroadcast("\n\n\n\n\n\n欢迎来到uTown-City！\n在这里，你既可以杀人获取EXP和钱来升级，也可以和别人一起游戏来升级;\n在这里，你可以当一个所有人针对杀人犯，也可以帮助新手获得友谊;\n在这里，你可以结识来自各个地区的朋友，也可能会碰到你在游戏里的仇人\n\n但是不会变的是：这里是uTown！我们仍在这里，等着你.                                ", m_pPlayer->GetCID());
+	}
+	else if(m_pPlayer->m_AccData.m_Level <= 199)
+		GameServer()->SendBroadcast("\n\n\n欢迎回到uTown-City！\n\n\n我们还在这里.\n\nWe are still here.\n\n\n\nWelcome back to uTown-City!                 ", m_pPlayer->GetCID());
+	else if(m_pPlayer->m_AccData.m_Level >= 200)
+	{
+		char aBuf[256];
+		str_format(aBuf, sizeof(aBuf), "Player '%d' Login!!!           玩家'%d'上线！！！", m_pPlayer->m_AccData.m_Username, m_pPlayer->m_AccData.m_Username);
+		GameServer()->SendBroadcast("在经历了这么多后还能看到你，真是太好了...", m_pPlayer->GetCID());
+		GameServer()->SendChatTarget(-1, aBuf);
+	}
+	m_pPlayer->Language = m_pPlayer->m_AccData.m_Language;
 
 }
 
@@ -275,11 +320,12 @@ void CAccount::Register(char *Username, char *Password)
 	FILE *Accfile;
 	Accfile = fopen(aBuf, "a+");
 
-	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d", 
+	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n\nEasyAdd", 
 		Username, 
 		Password, 
 		"0",
 		NextID(),
+		m_pPlayer->Language,
 
 		m_pPlayer->m_AccData.m_HouseID,
 		m_pPlayer->m_AccData.m_Money,
@@ -352,11 +398,12 @@ void CAccount::Apply()
 	FILE *Accfile;
 	Accfile = fopen(aBuf,"a+");
 	
-	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d", 
+	str_format(aBuf, sizeof(aBuf), "%s\n%s\n%s\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n\n%d\n%d\n%d\n%d\n\nEasyAdd", 
 		m_pPlayer->m_AccData.m_Username,
 		m_pPlayer->m_AccData.m_Password, 
 		m_pPlayer->m_AccData.m_RconPassword, 
 		m_pPlayer->m_AccData.m_UserID,
+		m_pPlayer->m_AccData.m_Language,
 
 		m_pPlayer->m_AccData.m_HouseID,
 		m_pPlayer->m_AccData.m_Money,
@@ -411,6 +458,7 @@ void CAccount::Reset()
 	str_copy(m_pPlayer->m_AccData.m_Password, "", 32);
 	str_copy(m_pPlayer->m_AccData.m_RconPassword, "", 32);
 	m_pPlayer->m_AccData.m_UserID = 0;
+	m_pPlayer->m_AccData.m_Language = 1;
 	
 	m_pPlayer->m_AccData.m_HouseID = 0;
 	m_pPlayer->m_AccData.m_Money = 0;

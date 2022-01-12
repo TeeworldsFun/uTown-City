@@ -20,6 +20,7 @@ public:
 	CPlayer(CGameContext *pGameServer, int ClientID, int Team);
 	~CPlayer();
 
+	int Language;
 	void Init(int CID);
 
 	void TryRespawn();
@@ -112,6 +113,7 @@ public:
 		char m_Password[32];
 		char m_RconPassword[32];
 		int m_UserID;
+		int m_Language;
 
 		int m_HouseID;
 		unsigned int m_Money;
