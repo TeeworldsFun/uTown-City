@@ -10,6 +10,7 @@
 /*
 	Class: array
 		Normal dynamic array class
+
 	Remarks:
 		- Grows 50% each time it needs to fit new items
 		- Use set_size() if you know how many elements
@@ -56,15 +57,10 @@ public:
 		list = 0x0;
 	}
 
-	T& increment()
-	{
-		incsize();
-		set_size(size()+1);
-		return list[num_elements-1];
-	}
-	
+
 	/*
 		Function: delete_all
+
 		Remarks:
 			- Invalidates ranges
 	*/
@@ -78,6 +74,7 @@ public:
 
 	/*
 		Function: clear
+
 		Remarks:
 			- Invalidates ranges
 	*/
@@ -99,6 +96,7 @@ public:
 
 	/*
 		Function: remove_index_fast
+
 		Remarks:
 			- Invalidates ranges
 	*/
@@ -110,6 +108,7 @@ public:
 
 	/*
 		Function: remove_fast
+
 		Remarks:
 			- Invalidates ranges
 	*/
@@ -125,6 +124,7 @@ public:
 
 	/*
 		Function: remove_index
+
 		Remarks:
 			- Invalidates ranges
 	*/
@@ -138,6 +138,7 @@ public:
 
 	/*
 		Function: remove
+
 		Remarks:
 			- Invalidates ranges
 	*/
@@ -155,8 +156,10 @@ public:
 	/*
 		Function: add
 			Adds an item to the array.
+
 		Arguments:
 			item - Item to add.
+
 		Remarks:
 			- Invalidates ranges
 			- See remarks about <array> how the array grows.
@@ -172,9 +175,11 @@ public:
 	/*
 		Function: insert
 			Inserts an item into the array at a specified location.
+
 		Arguments:
 			item - Item to insert.
 			r - Range where to insert the item
+
 		Remarks:
 			- Invalidates ranges
 			- See remarks about <array> how the array grows.
@@ -231,6 +236,7 @@ public:
 	/*
 		Function: set_size
 			Resizes the array to the specified size.
+
 		Arguments:
 			new_size - The new size for the array.
 	*/
@@ -245,8 +251,10 @@ public:
 		Function: hint_size
 			Allocates the number of elements wanted but
 			does not increase the list size.
+
 		Arguments:
 			hint - Size to allocate.
+
 		Remarks:
 			- If the hint is smaller then the number of elements, nothing will be done.
 			- Invalidates ranges
@@ -261,6 +269,7 @@ public:
 	/*
 		Function: optimize
 			Removes unnessasary data, returns how many bytes was earned.
+
 		Remarks:
 			- Invalidates ranges
 	*/
@@ -282,6 +291,7 @@ public:
 
 	/*
 		Function: operator=(array)
+
 		Remarks:
 			- Invalidates ranges
 	*/

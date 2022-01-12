@@ -28,7 +28,8 @@ public:
 	int GetPlayerLevel();
 	int GetPlayerExp();
 	
-	
+	char aBufe[64];
+	char aBufc[64];
 	//bool LoggedIn(const char * Username);
 	//int NameToID(const char * Username);
 

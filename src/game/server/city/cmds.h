@@ -14,6 +14,8 @@ public:
 	void ChatCmd(CNetMsg_Cl_Say *Msg);
 
 private:
+	char aBufe[64];
+	char aBufc[64];
 	CPlayer *m_pPlayer;
 	CGameContext *m_pGameServer;
 	CGameContext *GameServer() const { return m_pGameServer; }

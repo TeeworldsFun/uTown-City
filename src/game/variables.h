@@ -42,9 +42,10 @@ MACRO_CONFIG_INT(EuNinjaPermanent, eu_ninja_permanent, 180000, 0, 1000000, CFGFL
 MACRO_CONFIG_INT(EuNinjaStart, eu_ninja_start, 72000, 0, 1000000, CFGFLAG_SERVER, "Price - Ninja start")
 MACRO_CONFIG_INT(EuNinjaSwitch, eu_ninja_switch, 9000, 0, 1000000, CFGFLAG_SERVER, "Price - Ninja switch")
 
+MACRO_CONFIG_INT(EuHouse, eu_house, 555000000, 0, 999999999, CFGFLAG_SERVER, "Price - House!")
 MACRO_CONFIG_STR(SvBroadcast, sv_broadcast, 128, "", CFGFLAG_SERVER, "Broadcast message")
 
-MACRO_CONFIG_INT(EnableInstagib, sv_enable_instagib, 0, 0, 1, CFGFLAG_SERVER, "Enable/Disable Instagib")
+MACRO_CONFIG_INT(SvEnableMinigames, sv_enable_minigames, 0, 0, 1, CFGFLAG_SERVER, "Enable/Disable minigames")
 
 
 // client

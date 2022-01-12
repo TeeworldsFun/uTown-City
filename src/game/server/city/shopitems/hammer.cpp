@@ -60,6 +60,9 @@ void CHammer::Tick()
 	case 3:
 		pOwner->Buy("Hammer kill", &pOwner->GetPlayer()->m_AccData.m_HammerKill, g_Config.m_EuHammerKill, Click, 1);
 		break;
+	case 4:
+		pOwner->Buy("House - Home", &pOwner->GetPlayer()->m_AccData.m_HouseID, g_Config.m_EuHouse, Click, 1);
+		break;
 	}
 }
 
@@ -71,10 +74,11 @@ void CHammer::Snap(int SnappingClient)
 	if(Server()->Tick()%5 == 0)
 		m_StartTick = Server()->Tick();
 
-	vec2 Positions[3];
+	vec2 Positions[4];
 	Positions[0] = vec2(m_Pos.x - 32, m_Pos.y - 16);
 	Positions[1] = vec2(m_Pos.x + 32, m_Pos.y - 16);
 	Positions[2] = vec2(m_Pos.x, m_Pos.y + 16);
+	Positions[3] = vec2(m_Pos.x, m_Pos.y - 16);
 
 	if(m_Type == 1)// Wall
 	{
@@ -147,6 +151,25 @@ void CHammer::Snap(int SnappingClient)
 				pEvent->m_Y = (int)m_Pos.y;
 				pEvent->m_ClientID = m_Owner;
 			}
+		}
+
+	}
+	else if(m_Type == 4)// House
+	{
+		CNetObj_Laser *pObj[3];
+	
+		for(int i = 0; i < 3; i++)
+		{
+			pObj[i] = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_IDs[i], sizeof(CNetObj_Laser)));
+
+			if(!pObj[i])
+				return;
+
+			pObj[i]->m_X = (int)Positions[i].x;
+			pObj[i]->m_Y = (int)Positions[i].y;
+			pObj[i]->m_FromX = (int)Positions[i].x;
+			pObj[i]->m_FromY = (int)Positions[i].y;
+			pObj[i]->m_StartTick = Server()->Tick();
 		}
 
 	}

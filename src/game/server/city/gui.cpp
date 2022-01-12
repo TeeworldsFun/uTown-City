@@ -31,10 +31,11 @@ CGui::CGui(CGameWorld *pGameWorld, int Owner)
 	m_apShop[0] = new CHammer(GameWorld(), m_Owner, m_Pos, 1);
 	m_apShop[1] = new CHammer(GameWorld(), m_Owner, m_Pos, 2);
 	m_apShop[2] = new CHammer(GameWorld(), m_Owner, m_Pos, 3);
+	m_apShop[3] = new CHammer(GameWorld(), m_Owner, m_Pos, 4);
 		
-	m_apShop[3] = new CGun(GameWorld(), m_Owner, m_Pos, 1);
-	m_apShop[4] = new CGun(GameWorld(), m_Owner, m_Pos, 2);
-	m_apShop[5] = new CGun(GameWorld(), m_Owner, m_Pos, 3);
+	m_apShop[4] = new CGun(GameWorld(), m_Owner, m_Pos, 1);
+	m_apShop[5] = new CGun(GameWorld(), m_Owner, m_Pos, 2);
+//	m_apShop[5] = new CGun(GameWorld(), m_Owner, m_Pos, 3);
 
 	m_apShop[6] = new CShotgun(pGameWorld, m_Owner, m_Pos, 1);
 	m_apShop[7] = new CShotgun(pGameWorld, m_Owner, m_Pos, 2);

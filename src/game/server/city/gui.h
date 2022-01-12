@@ -18,7 +18,7 @@ public:
 	void Menu();
 
 	bool m_Visible;
-	CEntity *m_apShop[24];
+	CEntity *m_apShop[25];
 
 private:
 	vec2 m_Pos;

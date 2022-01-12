@@ -113,7 +113,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 		LastChat();
 		if(!m_pPlayer->m_AccData.m_Donor)
 		{
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Access denied");
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You are not Donor");
 			return;
 		}
 
@@ -127,16 +127,16 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 	else if(!str_comp_nocase(Msg->m_pMessage, "/home") || !str_comp_nocase(Msg->m_pMessage, "/house"))
 	{
 		LastChat();
-		/*if(!m_pPlayer->m_AccData.m_Donor || !m_pPlayer->m_AccData.m_UserID)
+		if(!m_pPlayer->m_AccData.m_HouseID || !m_pPlayer->m_AccData.m_UserID)
 		{
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Access denied");
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You don't have any House!");
 			return;
 		}
-		*/
 
 		CCharacter *pOwner = GameServer()->GetPlayerChar(m_pPlayer->GetCID());
 		
-		if(pOwner && pOwner->IsAlive())
+		if(pOwner && pOwner->IsAlive() && m_pPlayer->m_AccData.m_HouseID)
+		{
 			pOwner->m_Home = m_pPlayer->m_AccData.m_HouseID;
 			dbg_msg("-.-", "/home: %i", pOwner->m_Home);
 		}
@@ -289,7 +289,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
     {
 		LastChat();
 		char aBuf[200];	
-		if(!g_Config.m_EnableInstagib)
+		if(!g_Config.m_SvEnableMinigames)
 		{
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Instagib is not enabled on this server");
 			return;
@@ -319,7 +319,7 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
     {
 		LastChat();
 		char aBuf[200];	
-		if(!g_Config.m_EnableFng)
+		if(!g_Config.m_SvEnableMinigames)
 		{
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Fng is not enabled on this server");
 			return;
