@@ -4,6 +4,7 @@
 
 #include <base/system.h>
 #include "network.h"
+#include "protocol.h"
 
 #define MACRO_LIST_LINK_FIRST(Object, First, Prev, Next) \
 	{ if(First) First->Prev = Object; \
@@ -40,8 +41,8 @@ bool CNetServer::Open(NETADDR BindAddr, int MaxClients, int MaxClientsPerIP, int
 
 	// clamp clients
 	m_MaxClients = MaxClients;
-	if(m_MaxClients > NET_MAX_CLIENTS)
-		m_MaxClients = NET_MAX_CLIENTS;
+	if(m_MaxClients > VAN_MAX_CLIENTS)
+		m_MaxClients = VAN_MAX_CLIENTS;
 	if(m_MaxClients < 1)
 		m_MaxClients = 1;
 
@@ -402,11 +403,11 @@ int CNetServer::Recv(CNetChunk *pChunk)
 							}
 						}
 
-						if(!Found)
+						/*if(!Found)
 						{
 							const char FullMsg[] = "This server is full";
 							CNetBase::SendControlMsg(m_Socket, &Addr, 0, NET_CTRLMSG_CLOSE, FullMsg, sizeof(FullMsg));
-						}
+						}*/
 					}
 				}
 				else
@@ -461,10 +462,6 @@ int CNetServer::Send(CNetChunk *pChunk)
 		{
 			if(pChunk->m_Flags&NETSENDFLAG_FLUSH)
 				m_aSlots[pChunk->m_ClientID].m_Connection.Flush();
-		}
-		else
-		{
-			Drop(pChunk->m_ClientID, "Error sending data");
 		}
 	}
 	return 0;

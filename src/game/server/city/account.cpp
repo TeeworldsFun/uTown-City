@@ -8,6 +8,7 @@
 #include "game/server/gamecontroller.h"
 #include "game/server/gamecontext.h"
 #include <game/server/languages.h>
+#include <sys/stat.h>
 //#include "minecity/components/localization.h"
 
 #if defined(CONF_FAMILY_WINDOWS)
@@ -54,9 +55,10 @@ int CAccount::PlayerLevelUp()
 		}
 		if(upgraded)
 		{
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "[Level UP] 恭喜你你升级了.");
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "[Level UP] 恭喜你, 你升级了!");
 			GameServer()->CreateSoundGlobal(SOUND_CTF_CAPTURE, m_pPlayer->GetCID());
 			m_pPlayer->m_AccData.m_Level++;
+			m_pPlayer->m_AccData.m_Money += GetPlayerLevel()*100;
 		}
 	}
 }
@@ -141,6 +143,7 @@ void CAccount::Login(char *Username, char *Password)
 			{
 				dbg_msg("account", "Account login failed ('%s' - already in use (local))", Username);
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Account already in use");
+				return;
 			}
 
 			if(!GameServer()->m_aaExtIDs[i][j])
@@ -150,6 +153,7 @@ void CAccount::Login(char *Username, char *Password)
 			{
 				dbg_msg("account", "Account login failed ('%s' - already in use (extern))", Username);
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Account already in use");
+				return;
 			}
 		}
 	}
@@ -316,7 +320,7 @@ void CAccount::Register(char *Username, char *Password)
 	#endif
 
 	str_format(aBuf, sizeof(aBuf), "accounts/%s.acc", Username);
-
+	mkdir("accounts", 64);
 	FILE *Accfile;
 	Accfile = fopen(aBuf, "a+");
 
@@ -327,7 +331,7 @@ void CAccount::Register(char *Username, char *Password)
 		NextID(),
 		m_pPlayer->Language,
 
-		m_pPlayer->m_AccData.m_HouseID,
+		NextHouseID(),
 		m_pPlayer->m_AccData.m_Money,
 		m_pPlayer->m_AccData.m_Health<10?10:m_pPlayer->m_AccData.m_Health,
 		m_pPlayer->m_AccData.m_Armor<10?10:m_pPlayer->m_AccData.m_Armor,
@@ -597,6 +601,41 @@ int CAccount::NextID()
 	{
 		Accfile = fopen(AccUserID, "a+");
 		str_format(aBuf, sizeof(aBuf), "%d", UserID);
+		fputs(aBuf, Accfile);
+		fclose(Accfile);
+	}
+
+	return 1;
+}
+
+int CAccount::NextHouseID()
+{
+	FILE *Accfile;
+	int HouseID = 1;
+	char aBuf[32];
+	char AccHouseID[32];
+
+	str_copy(AccHouseID, "accounts/++HouseIDs++.acc", sizeof(AccHouseID));
+
+	if(Exists("HouseIDs++"))
+	{
+		Accfile = fopen(AccHouseID, "r");
+		fscanf(Accfile, "%d", &HouseID);
+		fclose(Accfile);
+
+		std::remove(AccHouseID);
+
+		Accfile = fopen(AccHouseID, "a+");
+		str_format(aBuf, sizeof(aBuf), "%d", HouseID+1);
+		fputs(aBuf, Accfile);
+		fclose(Accfile);
+
+		return HouseID+1;
+	}
+	else
+	{
+		Accfile = fopen(AccHouseID, "a+");
+		str_format(aBuf, sizeof(aBuf), "%d", HouseID);
 		fputs(aBuf, Accfile);
 		fclose(Accfile);
 	}

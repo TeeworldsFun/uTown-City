@@ -24,6 +24,7 @@ public:
 
 	static const int MAX_SERVER = 2;
 	int NextID();
+	int NextHouseID();
 
 	int PlayerLevelUp();
 	int PlayerExpUp();

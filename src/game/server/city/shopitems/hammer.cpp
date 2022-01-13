@@ -3,6 +3,8 @@
 #include <game/generated/protocol.h>
 #include <game/server/gamecontext.h>
 #include "hammer.h"
+#include <game/server/city/account.h>
+#include <game/server/player.h>
 
 CHammer::CHammer(CGameWorld *pGameWorld, int Owner, vec2 Pos, int Type)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
@@ -49,6 +51,7 @@ void CHammer::Tick()
 		return;
 	}
 	
+	CAccount *m_pAccount;
 	switch(m_Type)
 	{
 	case 1:
@@ -61,7 +64,7 @@ void CHammer::Tick()
 		pOwner->Buy("Hammer kill", &pOwner->GetPlayer()->m_AccData.m_HammerKill, g_Config.m_EuHammerKill, Click, 1);
 		break;
 	case 4:
-		pOwner->Buy("House - Home", &pOwner->GetPlayer()->m_AccData.m_HouseID, g_Config.m_EuHouse, Click, 1);
+		pOwner->Buy("House - Home", &pOwner->GetPlayer()->m_AccData.m_HouseID, g_Config.m_EuHouse, Click, m_pAccount->NextHouseID());
 		break;
 	}
 }
@@ -74,11 +77,9 @@ void CHammer::Snap(int SnappingClient)
 	if(Server()->Tick()%5 == 0)
 		m_StartTick = Server()->Tick();
 
-	vec2 Positions[4];
-	Positions[0] = vec2(m_Pos.x - 32, m_Pos.y - 16);
-	Positions[1] = vec2(m_Pos.x + 32, m_Pos.y - 16);
-	Positions[2] = vec2(m_Pos.x, m_Pos.y + 16);
-	Positions[3] = vec2(m_Pos.x, m_Pos.y - 16);
+	vec2 Positions[6];
+	Positions[0] = vec2(m_Pos.x - 32, m_Pos.y + 16);
+	Positions[1] = vec2(m_Pos.x - 32, m_Pos.y + 16);
 
 	if(m_Type == 1)// Wall
 	{
@@ -156,21 +157,69 @@ void CHammer::Snap(int SnappingClient)
 	}
 	else if(m_Type == 4)// House
 	{
-		CNetObj_Laser *pObj[10];
-	
-		for(int i = 0; i < 10; i++)
+		CNetObj_Laser *pObj[7];
+
+	for(int i = 0; i < 7; i++)
+	{
+		vec2 From = vec2(0, 0);
+		vec2 To = vec2(0, 0);
+
+		CCharacter *pOwner = GameServer()->GetPlayerChar(m_Owner);
+		CNetObj_PlayerInput *m_Input;
+		CPlayer *m_pPlayer;
+		switch(i)
 		{
-			pObj[i] = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_IDs[i], sizeof(CNetObj_Laser)));
-
-			if(!pObj[i])
-				return;
-
-			pObj[i]->m_X = (int)Positions[i].x;
-			pObj[i]->m_Y = (int)Positions[i].y;
-			pObj[i]->m_FromX = (int)Positions[i].x;
-			pObj[i]->m_FromY = (int)Positions[i].y;
-			pObj[i]->m_StartTick = Server()->Tick();
+		case 0:
+			From.x = -25;
+			From.y = -25;
+			To.y = +15;
+			To.x = -25;
+			break;
+		case 1:
+			From.x = -25;
+			From.y = +15;
+			To.y = +15;
+			To.x = +25;
+			break;
+		case 2:	
+			From.x = -25;
+			From.y = +25;
+			To.x = -25;
+			To.y = -25;
+			break;
+		case 3:
+			From.x = +25;
+			From.y = -25;
+			To.x = +25;
+			To.y = 15;
+			break;
+		case 4:
+			From.x = -26;
+			From.y = -26;
+			To.y = -45;
+			break;
+		case 5:
+			From.x = +26;
+			From.y = -26;
+			To.y = -45;
+			break;
+		case 6:
+			From.x = +20;
+			From.y = -20;
+			break;
 		}
+
+		pObj[i] = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_IDs[i], sizeof(CNetObj_Laser)));
+
+		if(!pObj[i])
+			return;
+
+		pObj[i]->m_X = (int)m_Pos.x + To.x;
+		pObj[i]->m_Y = (int)m_Pos.y + To.y;
+		pObj[i]->m_FromX = (int)m_Pos.x + From.x;
+		pObj[i]->m_FromY = (int)m_Pos.y + From.y;
+		pObj[i]->m_StartTick = Server()->Tick();
+	}
 
 	}
 

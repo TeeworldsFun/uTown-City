@@ -709,7 +709,7 @@ void CCharacter::FireWeapon()
 
 			Server()->SendMsg(&Msg, 0, m_pPlayer->GetCID());
 
-			GameServer()->CreateSound(m_Pos, SOUND_GUN_FIRE);
+			//GameServer()->CreateSound(m_Pos, SOUND_GUN_FIRE);
 		} break;
 
 		case WEAPON_SHOTGUN:
@@ -758,7 +758,7 @@ void CCharacter::FireWeapon()
 			else
 				new CLaser(GameWorld(), m_Pos, Direction, GameServer()->Tuning()->m_LaserReach, m_pPlayer->GetCID(), WEAPON_SHOTGUN);
 
-			GameServer()->CreateSound(m_Pos, SOUND_SHOTGUN_FIRE);
+			//GameServer()->CreateSound(m_Pos, SOUND_SHOTGUN_FIRE);
 		} break;
 
 		case WEAPON_GRENADE:
@@ -874,8 +874,6 @@ void CCharacter::FireWeapon()
 				m_Ninja.m_ActivationDir = Direction;
 				m_Ninja.m_CurrentMoveTime = g_pData->m_Weapons.m_Ninja.m_Movetime * Server()->TickSpeed() / 1000;
 				m_Ninja.m_OldVelAmount = length(m_Core.m_Vel);
-
-				GameServer()->CreateSound(m_Pos, SOUND_NINJA_FIRE);
 			}
 		} break;
 
@@ -1168,7 +1166,7 @@ void CCharacter::Booster()
 		GameServer()->SendBroadcast("Policezone - Acces denied", m_pPlayer->GetCID());
 		Die(m_pPlayer->GetCID(), WEAPON_WORLD);
 	}
-	else if(GameServer()->Collision()->IsTile(m_Pos, TILE_DONOR) && !m_pPlayer->m_AccData.m_Donor && Server()->AuthLvl(m_pPlayer->GetCID()) < 2)
+	else if(GameServer()->Collision()->IsTile(m_Pos, TILE_DONOR) && !m_pPlayer->m_AccData.m_Donor && Server()->AuthLvl(m_pPlayer->GetCID()) < 2 && m_pPlayer->m_AccData.m_HouseID < 1)
 	{
 		GameServer()->SendBroadcast("Donorzone - Acces denied", m_pPlayer->GetCID());
 		Die(m_pPlayer->GetCID(), WEAPON_WORLD);
