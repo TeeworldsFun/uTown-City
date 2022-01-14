@@ -18,7 +18,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_ScoreStartTick = Server()->Tick();
 	m_pCharacter = 0;
 	m_ClientID = ClientID;
-	m_Team = TEAM_SPECTATORS;
+	m_Team = GameServer()->m_pController->ClampTeam(Team);
 	m_SpectatorID = SPEC_FREEVIEW;
 	m_LastActionTick = Server()->Tick();
 	m_TeamChangeTick = Server()->Tick();
@@ -27,7 +27,10 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_Score = 1;
 	Language = 1;
 	m_Rainbow = false;
-	m_Insta = false;
+	if(m_IsDummy)
+		m_Insta = true;
+	else
+		m_Insta = false;
 	m_Fng = false;
 	m_pAccount = new CAccount(this, m_pGameServer);
 	m_pChatCmd = new CCmd(this, m_pGameServer);
@@ -35,6 +38,8 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	if(m_AccData.m_Health < 10)
 		m_AccData.m_Health = 10;
 
+	if(m_IsDummy)
+		m_AccData.m_UserID = m_pAccount->NextID();
 	if(m_AccData.m_UserID)
 		m_pAccount->Apply();
 }
@@ -68,7 +73,14 @@ void CPlayer::Tick()
 			GameServer()->SendBroadcast("\n\n输入'/register <用户名> <密码>' 注册\n输入'/login <用户名> <密码>'登录\n\n\n\n\n登录后才可以进入游戏!\nOnly join when you Login!\n\n\n\n\nType '/register <Username> <Password>' to register\nType '/login <Username> <Password>' to login", m_ClientID);
 	}
 
-	if(!m_AccData.m_UserID && m_Team != TEAM_SPECTATORS)
+	if(m_Team != TEAM_SPECTATORS && m_AccData.m_UserID && m_AccData.m_Level <= 10)
+	{
+		if(m_AccData.m_Kills <= 1)
+		{
+
+		}
+	}
+	if(!m_AccData.m_UserID && m_Team != TEAM_SPECTATORS && m_ClientID <= 16)
 		m_Team = TEAM_SPECTATORS;
 
 	if(Server()->Tick()%50 == 0)
@@ -176,13 +188,16 @@ void CPlayer::Tick()
 	else if(m_AccData.m_VIP)
 		//Server()->SetClientClan(GetCID(), "[*Vip*]");
 		str_copy(m_aRank, "[*Vip*]", sizeof(m_aRank));
+	else if(m_Insta && m_IsDummy)
+		str_copy(m_aRank, "来/insta", sizeof(m_aRank));
 
 	const char *pMatchAdmin = str_find_nocase(Server()->ClientClan(GetCID()), "Admin");
 	const char *pMatchVip = str_find_nocase(Server()->ClientClan(GetCID()), "Vip");
 	const char *pMatchDonor = str_find_nocase(Server()->ClientClan(GetCID()), "Donor");
 	const char *pMatchPolice = str_find_nocase(Server()->ClientClan(GetCID()), "Police");
+	const char *pMatchInstaDummy = str_find_nocase(Server()->ClientClan(GetCID()), "来/insta");
 
-	if(pMatchAdmin || pMatchVip || pMatchDonor || pMatchPolice)
+	if(pMatchInstaDummy || pMatchAdmin || pMatchVip || pMatchDonor || pMatchPolice)
 		Server()->SetClientClan(GetCID(), "");
 
 		/*else if(!str_find_nocase(Server()->ClientClan(GetCID()), "Admin") || !str_find_nocase(Server()->ClientClan(GetCID()), "Vip") || !str_find_nocase(Server()->ClientClan(GetCID()), "Donor") || !str_find_nocase(Server()->ClientClan(GetCID()), "Police"))
@@ -196,7 +211,7 @@ void CPlayer::PostTick()
 	// update latency value
 	if(m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
 	{
-		for(int i = 0; i < MAX_CLIENTS; ++i)
+		for(int i = 0; i < 17; ++i)
 		{
 			if(GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetTeam() != TEAM_SPECTATORS)
 				m_aActLatency[i] = GameServer()->m_apPlayers[i]->m_Latency.m_Min;
@@ -346,14 +361,15 @@ void CPlayer::KillCharacter(int Weapon)
 
 void CPlayer::Respawn()
 {
+	GameServer()->CreateSoundGlobal(SOUND_MENU, GetCID());
 	if(m_Team != TEAM_SPECTATORS)
 		m_Spawning = true;
 }
 
 void CPlayer::SetTeam(int Team)
 {
-	if(!m_AccData.m_UserID)
-		return;
+	//if(!m_AccData.m_UserID)
+//		return;
 	// clamp the team
 	Team = GameServer()->m_pController->ClampTeam(Team);
 	if(m_Team == Team)
@@ -362,6 +378,8 @@ void CPlayer::SetTeam(int Team)
 	char aBuf[512];
 	str_format(aBuf, sizeof(aBuf), "'%s' joined the %s", Server()->ClientName(m_ClientID), GameServer()->m_pController->GetTeamName(Team));
 	GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+
+	GameServer()->CreateSoundGlobal(SOUND_MENU, m_ClientID);
 
 	KillCharacter();
 

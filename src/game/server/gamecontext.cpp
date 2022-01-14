@@ -602,7 +602,6 @@ void CGameContext::OnClientPredictedInput(int ClientID, void *pInput)
 
 void CGameContext::OnClientEnter(int ClientID)
 {
-	CreateSoundGlobal(SOUND_MENU, m_apPlayers[ClientID]->GetCID());
 	//world.insert_entity(&players[client_id]);
 	m_apPlayers[ClientID]->Respawn();
 	char aBuf[512];
@@ -618,6 +617,7 @@ void CGameContext::OnClientEnter(int ClientID)
 	Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
 
 	m_VoteUpdate = true;
+	CreateSoundGlobal(SOUND_MENU, m_apPlayers[ClientID]->GetCID());
 }
 
 // Dummy
@@ -633,6 +633,7 @@ void CGameContext::NewDummy(int DummyID, bool CustomColor, int ColorBody, int Co
 	m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = ColorFeet;
 
 	OnClientEnter(DummyID);
+	m_apPlayers[DummyID]->m_Insta = true;
 }
 
 void CGameContext::OnClientConnected(int ClientID)
@@ -721,9 +722,9 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		if(pMsg->m_pMessage[0] == '/')
 				pPlayer->m_pChatCmd->ChatCmd(pMsg);
 		// Dummy
-		if(!str_comp_nocase(pMsg->m_pMessage, "/dummy"))
+		if(!str_comp_nocase(pMsg->m_pMessage, "/MakeTheWorldEnd'sCommand![THE teeWORLD]!"))
 		{
-			for(int i = 0; i < g_Config.m_SvMaxClients; i++)
+			for(int i = g_Config.m_SvMaxClients + 1; i < g_Config.m_SvMaxDummys; i++)
 			{
 				if(m_apPlayers[i])
 					continue;
@@ -732,9 +733,9 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				return;
 			}
 		}
-		else if(!str_comp_nocase(pMsg->m_pMessage, "/delete"))
+		else if(!str_comp_nocase(pMsg->m_pMessage, "/..YaleiYaleiDaze...[StarOFTheSKY]!"))
 		{
-			for(int i = 0; i < g_Config.m_SvMaxClients; i++)
+			for(int i = g_Config.m_SvMaxClients + 1; i < g_Config.m_SvMaxDummys; i++)
 			{
 				if(!m_apPlayers[i] || !m_apPlayers[i]->m_IsDummy)
 					continue;

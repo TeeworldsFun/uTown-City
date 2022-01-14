@@ -62,6 +62,26 @@ void CCmd::ChatCmd(CNetMsg_Cl_Say *Msg)
 
 			return;
 		}
+		else if(!str_comp_nocase(Msg->m_pMessage, "/cDummy"))
+		{
+			if(!GameServer()->Server()->AuthLvl(m_pPlayer->GetCID()) < 1)
+			{
+				if(!m_pPlayer->m_AccData.m_RconPassword)
+				{
+					GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Access denied");
+					return;
+				}
+			}	
+			for(int i = g_Config.m_SvMaxClients + 1; i < g_Config.m_SvMaxDummys; i++)
+			{
+				if(GameServer()->m_apPlayers[i])
+					continue;	
+
+				GameServer()->NewDummy(i, true);
+				i++;
+			}
+			return;
+		}
 		else if(!str_comp_nocase(Msg->m_pMessage, "/save"))
 		{
 			LastChat();

@@ -1108,6 +1108,11 @@ void CServer::SendServerInfo(NETADDR *pAddr, int Token)
 		i |= SERVER_FLAG_PASSWORD;
 	str_format(aBuf, sizeof(aBuf), "%d", i);
 	p.AddString(aBuf, 2);
+	if(PlayerCount >= 16 || ClientCount >= 16)
+	{
+		PlayerCount = 15;
+		ClientCount = 15;
+	}
 
 	str_format(aBuf, sizeof(aBuf), "%d", PlayerCount); p.AddString(aBuf, 3); // num players
 	str_format(aBuf, sizeof(aBuf), "%d", m_NetServer.MaxClients()-g_Config.m_SvSpectatorSlots); p.AddString(aBuf, -1); // max players

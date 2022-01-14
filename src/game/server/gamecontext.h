@@ -61,6 +61,7 @@ class CGameContext : public IGameServer
 	static void ConForceVote(IConsole::IResult *pResult, void *pUserData);
 	static void ConClearVotes(IConsole::IResult *pResult, void *pUserData);
 	static void ConVote(IConsole::IResult *pResult, void *pUserData);
+	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 
 	CGameContext(int Resetting);
@@ -139,7 +140,7 @@ public:
 	void SendBroadcast(const char *pText, int ClientID);
 
 	// Dummy
-	void NewDummy(int DummyID, bool CustomColor = false, int ColorBody = 12895054, int ColorFeet = 12895054, const char *pSkin = "coala", const char *pName = "Dummy", const char *pClan = "[16x16]", int Country = -1);
+	void NewDummy(int DummyID, bool CustomColor = false, int ColorBody = 12895054, int ColorFeet = 12895054, const char *pSkin = "coala", const char *pName = "射我ShootMe", const char *pClan = "CHNFun", int Country = 156);
 
 	//
 	void CheckPureTuning();

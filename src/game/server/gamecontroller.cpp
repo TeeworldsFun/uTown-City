@@ -432,9 +432,9 @@ int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *
 				pKiller->m_AccData.m_Money += 1000+(pKiller->GetCharacter()->m_InstaKills*100);
 				pKiller->m_pAccount->PlayerLevelUp();
 			
-				str_format(aKillmsg, sizeof(aKillmsg), "+%d Exp || Current: %i Exp || %i Insta-Kills", pKiller->m_AccData.m_ExpPoints, pKiller->GetCharacter()->m_InstaKills);
+				str_format(aKillmsg, sizeof(aKillmsg), "+%d Exp || Current: %i Exp || %i Insta-Kills", pKiller->GetCharacter()->m_InstaKills * 500, pKiller->m_AccData.m_ExpPoints, pKiller->GetCharacter()->m_InstaKills);
 					pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
-				str_format(aKillmsg, sizeof(aKillmsg), "+%i TC || Current: %i TC",pKiller->GetCharacter()->m_InstaKills*100+1000,pKiller->m_AccData.m_Money,pKiller->GetCharacter()->m_InstaKills);
+				str_format(aKillmsg, sizeof(aKillmsg), "+%i TC || Current: %i TC", 1000+(pKiller->GetCharacter()->m_InstaKills*100), pKiller->m_AccData.m_Money);
 					pKiller->GetCharacter()->GameServer()->SendChatTarget(pKiller->GetCID(), aKillmsg);
 				str_format(aBuf, sizeof(aBuf), "Level: %i || Exp: %i",pKiller->m_AccData.m_Level, pKiller->m_AccData.m_ExpPoints);
 					GameServer()->SendBroadcast(aBuf, pKiller->GetCID());
@@ -520,15 +520,15 @@ int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *
 	}
 
 	if(Weapon == WEAPON_SELF)
-		pVictim->GetPlayer()->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()*3.0f;
+		pVictim->GetPlayer()->m_RespawnTick = 0.0f;
 	return 0;
 }
 
 void IGameController::OnCharacterSpawn(class CCharacter *pChr)
 {
 	// default health / armor
-	pChr->IncreaseHealth(pChr->GetPlayer()->m_AccData.m_Health*pChr->GetPlayer()->m_AccData.m_Level);
-	pChr->IncreaseArmor(pChr->GetPlayer()->m_AccData.m_Armor*pChr->GetPlayer()->m_AccData.m_Level);
+	pChr->IncreaseHealth(pChr->GetPlayer()->m_AccData.m_Health*pChr->GetPlayer()->m_AccData.m_Level + 10);
+	pChr->IncreaseArmor(pChr->GetPlayer()->m_AccData.m_Armor*pChr->GetPlayer()->m_AccData.m_Level + 10);
 
 	// give default weapons
 	pChr->GiveWeapon(WEAPON_HAMMER, -1);
@@ -666,7 +666,7 @@ void IGameController::Tick()
 	if(g_Config.m_SvInactiveKickTime > 0)
 	{
 		
-		for(int i = 0; i < MAX_CLIENTS; ++i)
+		for(int i = 0; i < 17; ++i)
 		{
 			// Dummy
 			if(GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetTeam() != TEAM_SPECTATORS && !Server()->IsAuthed(i) && !GameServer()->m_apPlayers[i]->m_IsDummy)
@@ -686,7 +686,7 @@ void IGameController::Tick()
 							// move player to spectator if the reserved slots aren't filled yet, kick him otherwise
 							int Spectators = 0;
 
-							for(int j = 0; j < MAX_CLIENTS; ++j)
+							for(int j = 0; j < 17; ++j)
 								if(GameServer()->m_apPlayers[j] && GameServer()->m_apPlayers[j]->GetTeam() == TEAM_SPECTATORS)
 									++Spectators;
 							if(Spectators >= g_Config.m_SvSpectatorSlots)
@@ -699,6 +699,12 @@ void IGameController::Tick()
 						{
 							// kick the player
 							Server()->Kick(i, "Kicked for inactivity");
+						}
+					case 3:
+						{
+							char aBuf[256];
+							str_format(aBuf, sizeof(aBuf), "Player:'%s' Timeout, Someone KILL him!", Server()->ClientName(i));
+							GameServer()->SendChatTarget(-1, aBuf);
 						}
 					}
 				}

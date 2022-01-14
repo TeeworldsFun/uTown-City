@@ -161,7 +161,6 @@ public:
 
 		int m_Level;
 		int m_ExpPoints;
-
 	} m_AccData;
 
 	int m_RainbowColor;

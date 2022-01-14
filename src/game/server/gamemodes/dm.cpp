@@ -7,23 +7,12 @@
 CGameControllerDM::CGameControllerDM(class CGameContext *pGameServer)
 : IGameController(pGameServer)
 {
-	m_pGameType = "uTown-City";
+	m_pGameType = "u|City";
 }
 
 void CGameControllerDM::Tick()
 {
 	IGameController::Tick();
-	int Tipy;
-	if(Tipy == 1)
-	{
-		m_pGameType = "City";
-		Tipy--;
-	}
-	else
-	{
-		m_pGameType = "uTown";
-		Tipy++;
-	}
 
 
 	/*if(Tipy == 0)

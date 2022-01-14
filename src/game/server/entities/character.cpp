@@ -1164,12 +1164,12 @@ void CCharacter::Booster()
 	else if(GameServer()->Collision()->IsTile(m_Pos, TILE_POLICE) && Server()->AuthLvl(m_pPlayer->GetCID()) < 1)
 	{
 		GameServer()->SendBroadcast("Policezone - Acces denied", m_pPlayer->GetCID());
-		Die(m_pPlayer->GetCID(), WEAPON_WORLD);
+		//Die(m_pPlayer->GetCID(), WEAPON_WORLD);
 	}
 	else if(GameServer()->Collision()->IsTile(m_Pos, TILE_DONOR) && !m_pPlayer->m_AccData.m_Donor && Server()->AuthLvl(m_pPlayer->GetCID()) < 2 && m_pPlayer->m_AccData.m_HouseID < 1)
 	{
 		GameServer()->SendBroadcast("Donorzone - Acces denied", m_pPlayer->GetCID());
-		Die(m_pPlayer->GetCID(), WEAPON_WORLD);
+		//Die(m_pPlayer->GetCID(), WEAPON_WORLD);
 	}
 	else if(GameServer()->Collision()->IsTile(m_Pos, TILE_ADMIN) && Server()->AuthLvl(m_pPlayer->GetCID()) < 2)
 	{
@@ -1301,10 +1301,10 @@ void CCharacter::Booster()
 		}
 	}
 
-	//DONOR MONEY TILE!!! :D <3
+	//DONOR MONEY TILE!!! :D <3    :D*2
 	if(GameServer()->Collision()->IsTile(m_Pos, TILE_MONEY_DONOR))
 	{
-		if(m_pPlayer->m_AccData.m_Donor)
+		if(1 == 1)
 		{
 			if(Server()->Tick()%50 == 0)
 			{
@@ -1322,12 +1322,6 @@ void CCharacter::Booster()
 				}
 			}
 		}
-		else
-		{
-			GameServer()->SendBroadcast("Donor Money zone - Acces denied", m_pPlayer->GetCID());
-			Die(m_pPlayer->GetCID(), WEAPON_WORLD);
-		}
-	
 	}
 	if(GameServer()->Collision()->IsTile(m_Pos, TILE_LIFE))
 	{
@@ -1510,7 +1504,7 @@ void CCharacter::HandleCity()
 
 			m_pPlayer->m_AccData.m_Money += Money;
 			m_pPlayer->m_AccData.m_ExpPoints += Money;
-			str_format(aBuf, sizeof(aBuf), "\n\n\n\n\n\n\n\n\n\n\n\n\n              ________________________________________\n              |Money: %d TC \n              |&&             +%d\n              |Exp:  %d/%d  \n              |\n              |\n              |\n              |Level: %d\n              |\n              |\n              |", m_pPlayer->m_AccData.m_Money, Money, m_pPlayer->m_AccData.m_ExpPoints, m_pPlayer->m_AccData.m_Level*m_pPlayer->m_pAccount->GetNeedForUp(), m_pPlayer->m_AccData.m_Level);
+			str_format(aBuf, sizeof(aBuf), "\n\n              |Money: %d TC \n              |&&             +%d\n              |Exp:  %d/%d  \n              |\n              |\n              |\n              |Level: %d\n              |\n              |\n              |", m_pPlayer->m_AccData.m_Money, Money, m_pPlayer->m_AccData.m_ExpPoints, m_pPlayer->m_AccData.m_Level*m_pPlayer->m_pAccount->GetNeedForUp(), m_pPlayer->m_AccData.m_Level);
 			GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 		}
 	
@@ -1721,7 +1715,10 @@ void CCharacter::Die(int Killer, int Weapon)
 		return;
 
 	// we got to wait 0.5 secs before respawning
-	m_pPlayer->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()/2;
+	if(m_pPlayer->m_IsDummy)
+		m_pPlayer->m_RespawnTick = 0;
+	else
+		m_pPlayer->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()/2;
 	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
 
 	char aBuf[256];

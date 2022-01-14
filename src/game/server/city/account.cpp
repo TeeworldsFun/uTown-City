@@ -67,16 +67,16 @@ int CAccount::GetNeedForUp()
 {
 	//玩家升级所需经验基数赋值
 	if(m_pPlayer->m_AccData.m_Level < 100) return 500;
-	else if(m_pPlayer->m_AccData.m_Level < 200) return 10000;
-	else if(m_pPlayer->m_AccData.m_Level < 300) return 50000;
-	else if(m_pPlayer->m_AccData.m_Level < 400) return 80000;
-	else if(m_pPlayer->m_AccData.m_Level < 500) return 110000;
-	else if(m_pPlayer->m_AccData.m_Level < 600) return 130000;
-	else if(m_pPlayer->m_AccData.m_Level < 700) return 160000;
-	else if(m_pPlayer->m_AccData.m_Level < 1000) return 190000;
-	else if(m_pPlayer->m_AccData.m_Level < 1100) return 240000;
-	else if(m_pPlayer->m_AccData.m_Level < 1200) return 300000;
-	else return 400000;
+	else if(m_pPlayer->m_AccData.m_Level < 200) return 15000;
+	else if(m_pPlayer->m_AccData.m_Level < 300) return 55000;
+	else if(m_pPlayer->m_AccData.m_Level < 400) return 85000;
+	else if(m_pPlayer->m_AccData.m_Level < 500) return 150000;
+	else if(m_pPlayer->m_AccData.m_Level < 600) return 180000;
+	else if(m_pPlayer->m_AccData.m_Level < 700) return 220000;
+	else if(m_pPlayer->m_AccData.m_Level < 1000) return 530000;
+	else if(m_pPlayer->m_AccData.m_Level < 1100) return 960000;
+	else if(m_pPlayer->m_AccData.m_Level < 1200) return 2000000;
+	else return 1000000000;
 }
 
 int CAccount::GetPlayerLevel()
@@ -252,10 +252,10 @@ void CAccount::Login(char *Username, char *Password)
 
 	if(m_pPlayer->m_AccData.m_Level <= 10)
 	{
-		GameServer()->SendBroadcast("\n\n\n\n\n\n欢迎来到uTown-City！\n在这里，你既可以杀人获取EXP和钱来升级，也可以和别人一起游戏来升级;\n在这里，你可以当一个所有人针对杀人犯，也可以帮助新手获得友谊;\n在这里，你可以结识来自各个地区的朋友，也可能会碰到你在游戏里的仇人\n\n但是不会变的是：这里是uTown！我们仍在这里，等着你.                                ", m_pPlayer->GetCID());
+		GameServer()->SendBroadcast("\n\n\n\n\n\n欢迎来到u|City！\n在这里，你既可以杀人获取EXP和钱来升级，也可以和别人一起游戏来升级;\n在这里，你可以当一个所有人针对杀人犯，也可以帮助新手获得友谊;\n在这里，你可以结识来自各个地区的朋友，也可能会碰到你在游戏里的仇人\n\n但是不会变的是：这里是uTown！我们仍在这里，等着你.                                ", m_pPlayer->GetCID());
 	}
 	else if(m_pPlayer->m_AccData.m_Level <= 199)
-		GameServer()->SendBroadcast("\n\n\n欢迎回到uTown-City！\n\n\n我们还在这里.\n\nWe are still here.\n\n\n\nWelcome back to uTown-City!                 ", m_pPlayer->GetCID());
+		GameServer()->SendBroadcast("\n\n\n欢迎回到u|City！\n\n\n我们还在这里.\n\nWe are still here.\n\n\n\nWelcome back to uTown-City!                 ", m_pPlayer->GetCID());
 	else if(m_pPlayer->m_AccData.m_Level >= 200)
 	{
 		char aBuf[256];
