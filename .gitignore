@@ -1,8 +1,8 @@
-/objs/*
+objs/**
 *_d
 /datasrc/*.pyc
 /accounts/*.acc
 /teeworlds_srv
 /src/game/generated
-.bam
+.bam/**
 /build/**
