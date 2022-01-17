@@ -724,7 +724,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		// Dummy
 		if(!str_comp_nocase(pMsg->m_pMessage, "/MakeTheWorldEnd'sCommand![THE teeWORLD]!"))
 		{
-			for(int i = g_Config.m_SvMaxClients + 1; i < g_Config.m_SvMaxDummys; i++)
+			for(int i = g_Config.m_SvMaxClients + 1; i < g_Config.m_SvMaxClients + g_Config.m_SvMaxDummys; i++)
 			{
 				if(m_apPlayers[i])
 					continue;
