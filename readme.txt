@@ -1,3 +1,6 @@
+[DEPRECATED] Use https://github.com/teeworldsCNFun/UHCity-vL instead (private)
+contact TeeFlowerFell-Sans#9358 to get the binary(maybe cant)
+
 Origin uTown mod by Pikotee
 uTown-City base on Pikotee's uTown
 https://github.com/Pikotee/teeworlds/tree/uTown/
